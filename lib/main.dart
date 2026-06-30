@@ -11,9 +11,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
-  // final box = GetStorage();
-  // await box.erase(); // Uncomment this line once to clear old data
-
   Get.put(SettingsController());
   runApp(MyApp());
 }
@@ -44,14 +41,18 @@ class MyApp extends StatelessWidget {
         themeMode: settings.currentThemeMode.value,
 
         builder: (context, child) {
-          return MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaleFactor: settings.fontSize.value / 16),
-            child: child!,
+          return Directionality(
+            textDirection: TextDirection.ltr, 
+            child: MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaleFactor: settings.fontSize.value / 16,
+              ),
+              child: child!,
+            ),
           );
         },
-        initialRoute: AppRoutes.splashScreen,
+
+        initialRoute: AppRoutes.mainScreen,
         getPages: pages,
       ),
     );

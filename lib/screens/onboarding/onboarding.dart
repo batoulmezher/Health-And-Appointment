@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:health_appointment_app/constant/colors.dart';
 import 'package:health_appointment_app/controller/onboarding_controller.dart';
 import 'package:health_appointment_app/widgets/onboarding/dot_indicator.dart';
-
 class Onboarding extends StatelessWidget {
   Onboarding({super.key});
   OnboardingController controller = Get.put(OnboardingController());
@@ -54,8 +53,7 @@ class Onboarding extends StatelessWidget {
                       width: 400,
                     ),
                   ),
-
-                  Padding(
+                  Padding(  
                     padding: const EdgeInsets.only(top: 250),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -110,11 +108,10 @@ class Onboarding extends StatelessWidget {
                             border: Border.all(color: Colors.amber, width: 2),
                           ),
                           child: MaterialButton(
+                            minWidth: 180,
                             onPressed: () {
                               controller.next();
                             },
-
-                            //     color: appColor.primary,
                             child: Text(
                               "Continue",
                               style: TextStyle(color: Colors.white),

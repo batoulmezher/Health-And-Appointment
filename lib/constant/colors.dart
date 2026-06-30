@@ -1,9 +1,8 @@
-import 'dart:ui';
-
+// lib/constant/colors.dart
 import 'package:flutter/material.dart';
 
 class appColor {
-     static Color grownd = Color(0xFFF1F3F5);
-
-   static Color primary = Color(0xFF001B48);
-}
+  static const Color grownd = Color(0xFFF1F3F5);   // الخلفية الفاتحة
+  static const Color primary = Color(0xFF001B48); // الأزرق الداكن
+  static const Color amber = Color(0xFFFFC107);   // الأصفر (ثابت)
+} 
