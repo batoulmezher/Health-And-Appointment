@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/services/auth/sign_up_service.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class RegisterController extends GetxController {
-  // الحقول النصية
   final fullNameController = TextEditingController();
   final phoneController = TextEditingController();
   final emailController = TextEditingController();
@@ -17,24 +17,18 @@ class RegisterController extends GetxController {
   final familyHistoryController = TextEditingController();
   final medicationsController = TextEditingController();
 
-  // القوائم المنسدلة
   var selectedGender = "".obs;
   var selectedBloodType = "".obs;
 
-  // الأسئلة الثنائية
   var hasChronicDisease = false.obs;
 
-  // تحميل الصورة
   var imageFile = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
 
-  // إظهار/إخفاء كلمة المرور
   var obscurePassword = true.obs;
 
-  // حالة التحميل
   var isLoading = false.obs;
 
-  // ✅ إنشاء نسخة من SignUpService
   final SignUpService _signUpService = SignUpService();
 
   void togglePasswordVisibility() => obscurePassword.toggle();
@@ -50,9 +44,7 @@ class RegisterController extends GetxController {
     }
   }
 
-  // ✅ دالة التسجيل مع استدعاء الخدمة
   Future<void> register() async {
-    // التحقق من الحقول الأساسية
     if (fullNameController.text.isEmpty) {
       Get.snackbar("خطأ", "يرجى إدخال الاسم الكامل",
           snackPosition: SnackPosition.BOTTOM,
@@ -85,7 +77,6 @@ class RegisterController extends GetxController {
       return;
     }
 
-    // التحقق من الحقول الإضافية
     if (selectedGender.value.isEmpty) {
       Get.snackbar("خطأ", "يرجى اختيار الجنس",
           snackPosition: SnackPosition.BOTTOM,
@@ -142,8 +133,7 @@ class RegisterController extends GetxController {
         current_medications: medicationsController.text.trim(),
       );
 
-      // معالجة الاستجابة
-      if (response != null && response['success'] == true) {
+      if (response != null && response['status'] == 'success') {
         Get.snackbar(
           "نجاح",
           response['message'] ?? "تم إنشاء الحساب بنجاح",
@@ -151,9 +141,8 @@ class RegisterController extends GetxController {
           backgroundColor: Colors.green.shade100,
           colorText: Colors.green.shade900,
         );
-        // التوجيه إلى تسجيل الدخول
         Future.delayed(const Duration(seconds: 1), () {
-          Get.offAllNamed('/login');
+          Get.offAllNamed(AppRoutes.otpRegister);
         });
       } else {
         String errorMessage = response?['message'] ?? "حدث خطأ أثناء التسجيل";
@@ -179,7 +168,6 @@ class RegisterController extends GetxController {
     }
   }
 
-  // دالة مساعدة للتحقق من البريد الإلكتروني
   bool _isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }

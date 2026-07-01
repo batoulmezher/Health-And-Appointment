@@ -1,9 +1,11 @@
 // lib/screens/specialties_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/constant/colors.dart';
 import 'package:health_appointment_app/controller/specialties_controller.dart';
 import 'package:health_appointment_app/models/specialty_model.dart';
+import 'package:health_appointment_app/screens/all_doctors_screen.dart';
 
 class SpecialtiesScreen extends StatelessWidget {
   const SpecialtiesScreen({super.key});
@@ -13,7 +15,9 @@ class SpecialtiesScreen extends StatelessWidget {
     final controller = Get.put(SpecialtiesController());
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    final backgroundColor = isDarkMode ? const Color(0xFF121212) : const Color(0xFFF5F7FA);
+    final backgroundColor = isDarkMode
+        ? const Color(0xFF121212)
+        : const Color(0xFFF5F7FA);
     final textColor = isDarkMode ? Colors.white : const Color(0xFF1A1A2E);
     final subTextColor = isDarkMode ? Colors.white70 : const Color(0xFF6B7280);
     final cardBackground = isDarkMode ? const Color(0xFF1E1E1E) : Colors.white;
@@ -23,7 +27,7 @@ class SpecialtiesScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-automaticallyImplyLeading: false,
+            automaticallyImplyLeading: false,
             expandedHeight: 200,
             pinned: true,
             backgroundColor: Colors.transparent,
@@ -43,7 +47,10 @@ automaticallyImplyLeading: false,
                   ),
                   child: SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 20,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -89,20 +96,17 @@ automaticallyImplyLeading: false,
           ),
 
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final specialty = controller.filteredSpecialties[index];
-                return _buildSpecialtyCard(
-                  context,
-                  specialty,
-                  isDarkMode,
-                  cardBackground,
-                  textColor,
-                  subTextColor,
-                );
-              },
-              childCount: controller.filteredSpecialties.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final specialty = controller.filteredSpecialties[index];
+              return _buildSpecialtyCard(
+                context,
+                specialty,
+                isDarkMode,
+                cardBackground,
+                textColor,
+                subTextColor,
+              );
+            }, childCount: controller.filteredSpecialties.length),
           ),
         ],
       ),
@@ -130,10 +134,7 @@ automaticallyImplyLeading: false,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(
-          color: Colors.amber.withOpacity(0.15),
-          width: 1.5,
-        ),
+        border: Border.all(color: Colors.amber.withOpacity(0.15), width: 1.5),
       ),
       child: Row(
         children: [
@@ -183,11 +184,7 @@ automaticallyImplyLeading: false,
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(
-                      Icons.person_outline,
-                      color: Colors.amber,
-                      size: 16,
-                    ),
+                    Icon(Icons.person_outline, color: Colors.amber, size: 16),
                     const SizedBox(width: 6),
                     Expanded(
                       child: ClipRRect(
@@ -219,12 +216,10 @@ automaticallyImplyLeading: false,
             ),
             child: GestureDetector(
               onTap: () {
-                // Get.to(
-                //   () => DoctorsBySpecialtyScreen(
-                //     specialtyName: specialty.name,
-                //   ),
-                // );
-              },
+                
+                
+Get.to(() => AllDoctorsScreen(specialtyName: specialty.name));    },
+              
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

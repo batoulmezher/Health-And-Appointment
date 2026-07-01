@@ -4,15 +4,11 @@ import 'package:health_appointment_app/Routes/pages.dart';
 import '../../screens/auth/otp_verification_screen.dart';
 
 class ForgetPasswordController extends GetxController {
-  // حقل الإدخال
   final emailOrPhoneController = TextEditingController();
 
-  // حالة التحميل (للتحقق من عدم إرسال طلبين)
   var isLoading = false.obs;
 
-  // دالة إرسال رمز الاستعادة
   void sendResetCode() {
-    // التحقق من الحقل
     if (emailOrPhoneController.text.isEmpty) {
       Get.snackbar(
         'تنبيه',
@@ -24,18 +20,11 @@ class ForgetPasswordController extends GetxController {
       return;
     }
 
-    // تحميل البيانات وإرسال الطلب (محاكاة)
     isLoading.value = true;
 
-    // هنا يمكن إضافة استدعاء API
-    // مثال:
-    // await apiService.sendResetCode(emailOrPhoneController.text);
-
-    // محاكاة نجاح العملية
     Future.delayed(const Duration(seconds: 2), () {
       isLoading.value = false;
       
-      // إظهار رسالة نجاح
       Get.snackbar(
         'نجاح',
         'تم إرسال رمز الاستعادة إلى بريدك الإلكتروني',
@@ -44,8 +33,6 @@ class ForgetPasswordController extends GetxController {
         colorText: Colors.green.shade900,
       );
 
-      // ✅ التوجيه إلى شاشة التحقق من الهوية مع تمرير البريد الإلكتروني أو رقم الهاتف
-      // يمكن تمرير البيانات عبر arguments
       Get.toNamed(
         AppRoutes.otpVerification,
         arguments: {

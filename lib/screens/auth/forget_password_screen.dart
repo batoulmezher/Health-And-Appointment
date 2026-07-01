@@ -77,7 +77,6 @@ class ForgetPasswordScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          // النص التوضيحي
           Text(
             "أدخل بريدك الإلكتروني أو رقم هاتفك وسنرسل لك رمزًا لاستعادة الوصول إلى حسابك بشكل آمن.",
             textAlign: TextAlign.center,
@@ -88,7 +87,6 @@ class ForgetPasswordScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 40),
-          // البطاقة الرئيسية
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -115,11 +113,9 @@ class ForgetPasswordScreen extends StatelessWidget {
                 ),
                
                 const SizedBox(height: 30),
-                // زر "إرسال الرمز"
                 AuthButton(onPressed:  controller.sendResetCode, text: "إرسال الرمز"),
              
                 const SizedBox(height: 24),
-                // معلومات الدعم
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -150,7 +146,6 @@ class ForgetPasswordScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          // التذييل (الروابط وحقوق النشر)
           Column(
             children: [
               const SizedBox(height: 50),

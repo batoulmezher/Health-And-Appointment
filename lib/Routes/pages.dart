@@ -8,7 +8,8 @@ static const String resetPassword = '/resetPassword';
 
 static const String specialtiesScreen = '/specialtiesScreen';
 static const String allDoctors = '/allDoctors';
-
+static const String otpRegister = '/otpRegister';
+static const String doctorProfileScreen = '/doctorProfileScreen';
 
 static const String completeProfile = '/completeProfile';
 static const String mainScreen = '/mainScreen';

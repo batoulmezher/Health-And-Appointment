@@ -6,7 +6,6 @@ import 'package:health_appointment_app/screens/home_screen.dart';
 import 'package:health_appointment_app/screens/messages_screen.dart';
 import 'package:health_appointment_app/screens/profile_screen.dart';
 
-
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
@@ -25,35 +24,32 @@ class MainScreen extends StatelessWidget {
           backgroundColor: isDarkMode ? Colors.black : Colors.white,
           selectedItemColor: appColor.appColor.primary,
           unselectedItemColor: isDarkMode ? Colors.white54 : Colors.grey.shade600,
-          selectedLabelStyle: TextStyle(
+          selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.bold,
-            color: appColor.appColor.primary,
           ),
-          unselectedLabelStyle: TextStyle(
-            color: isDarkMode ? Colors.white54 : Colors.grey.shade600,
-          ),
+          unselectedLabelStyle: const TextStyle(),
           elevation: 8,
           type: BottomNavigationBarType.fixed,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: 'الرئيسية',
+              icon: const Icon(Icons.home_outlined),
+              activeIcon: const Icon(Icons.home),
+              label: 'nav_home'.tr,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined),
-              activeIcon: Icon(Icons.calendar_today),
-              label: 'الحجوزات',
+              icon: const Icon(Icons.calendar_today_outlined),
+              activeIcon: const Icon(Icons.calendar_today),
+              label: 'nav_appointments'.tr,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.chat_bubble_outline),
-              activeIcon: Icon(Icons.chat_bubble),
-              label: 'الرسائل',
+              icon: const Icon(Icons.chat_bubble_outline),
+              activeIcon: const Icon(Icons.chat_bubble),
+              label: 'nav_messages'.tr,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'ملفي',
+              icon: const Icon(Icons.person_outline),
+              activeIcon: const Icon(Icons.person),
+              label: 'nav_profile'.tr,
             ),
           ],
         ),
@@ -62,7 +58,7 @@ class MainScreen extends StatelessWidget {
   }
 }
 
-// ✅ Controller لإدارة التنقل بين الصفحات
+// Controller لإدارة التنقل بين الصفحات
 class MainScreenController extends GetxController {
   var currentIndex = 0.obs;
 

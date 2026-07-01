@@ -248,7 +248,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             MaterialButton(
               onPressed: () {
-                Get.toNamed(AppRoutes.login);
+                Get.toNamed(AppRoutes.mainScreen);
                 
               },
               color: appColor.primary,

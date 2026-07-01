@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_appointment_app/Routes/pages.dart';
 
-class OtpVerificationController extends GetxController {
+class OtpRegiterController extends GetxController {
   final TextEditingController otpController = TextEditingController();
   final FocusNode otpFocusNode = FocusNode();
 
@@ -11,6 +11,7 @@ class OtpVerificationController extends GetxController {
   var isLoading = false.obs;
 
   Timer? _timer;
+  bool _isClosed = false; // ✅ علم لمنع الوصول بعد الإغلاق
 
   @override
   void onInit() {
@@ -19,11 +20,16 @@ class OtpVerificationController extends GetxController {
   }
 
   void startTimer() {
+    if (_isClosed) return;
     _timer?.cancel();
     remainingSeconds.value = 120;
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
+        if (_isClosed) {
+          timer.cancel();
+          return;
+        }
         if (remainingSeconds.value > 0) {
           remainingSeconds.value--;
         } else {
@@ -35,6 +41,7 @@ class OtpVerificationController extends GetxController {
   }
 
   void resendCode() {
+    if (_isClosed) return;
     startTimer();
     Get.snackbar(
       'نجاح',
@@ -46,22 +53,24 @@ class OtpVerificationController extends GetxController {
   }
 
   void verifyOtp() {
+    if (_isClosed) return;
     String otp = otpController.text.trim();
 
-    if (otp.length < 4) {
+    if (otp.length < 6) {
       Get.snackbar(
         'تنبيه',
-        'يرجى إدخال الرمز المكون من 4 أرقام بالكامل',
+        'يرجى إدخال الرمز المكون من 6 أرقام بالكامل',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
       );
       return;
     }
-  Get.offAllNamed(AppRoutes.resetPassword);
 
-    // await apiService.verifyOtp(otp);
+    // الانتقال إلى شاشة تسجيل الدخول
+    Get.offAllNamed(AppRoutes.login);
 
+    // عرض رسالة نجاح (قد تظهر قبل الانتقال، لكنها لا تؤثر)
     Get.snackbar(
       'نجاح',
       'تم التحقق من هويتك بنجاح',
@@ -69,16 +78,14 @@ class OtpVerificationController extends GetxController {
       backgroundColor: Colors.green.shade100,
       colorText: Colors.green.shade900,
     );
-
-    // Get.offAllNamed('/reset-password');
   }
 
   @override
   void onClose() {
+    _isClosed = true;
     _timer?.cancel();
     _timer = null;
-    otpController.dispose();
-    otpFocusNode.dispose();
+    // لا نحرر الـ Controllers يدوياً (نتركها للـ Garbage Collector)
     super.onClose();
   }
-}
+} 

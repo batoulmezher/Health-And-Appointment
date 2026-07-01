@@ -66,7 +66,7 @@ class OtpVerificationScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "أدخل الرمز المكون من 4 أرقام المرسل إلى هاتفك\nالمحمول لضمان خصوصية بياناتك الطبية.",
+                  "أدخل الرمز المكون من 6 أرقام المرسل إلى هاتفك\nالمحمول لضمان خصوصية بياناتك الطبية.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -79,7 +79,7 @@ class OtpVerificationScreen extends StatelessWidget {
                   textDirection: TextDirection.ltr,
                   child: PinCodeTextField(
                     appContext: context,
-                    length: 4,
+                    length: 6,
                     controller: controller.otpController,
                     focusNode: controller.otpFocusNode,
                     keyboardType: TextInputType.number,

@@ -13,23 +13,16 @@ class HomeScreen extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     final primaryTextColor = isDarkMode ? Colors.white : appColor.primary;
-    final secondaryTextColor = isDarkMode
-        ? Colors.white70
-        : appColor.primary.withOpacity(0.8);
-    final backgroundColor = isDarkMode
-        ? Colors.grey.shade900
-        : const Color(0xFFF8F9FB);
+    final secondaryTextColor = isDarkMode ? Colors.white70 : appColor.primary.withOpacity(0.8);
+    final backgroundColor = isDarkMode ? Colors.grey.shade900 : const Color(0xFFF8F9FB);
     final cardColor = isDarkMode ? Colors.black : Colors.white;
-    final fillColor = isDarkMode
-        ? Colors.grey.shade800
-        : const Color(0xFFF8F9FB);
+    final fillColor = isDarkMode ? Colors.grey.shade800 : const Color(0xFFF8F9FB);
     final hintColor = isDarkMode ? Colors.white60 : Colors.grey.shade400;
 
     return Scaffold(
       backgroundColor: backgroundColor,
       body: CustomScrollView(
         slivers: [
-         
           SliverAppBar(
             automaticallyImplyLeading: false,
             expandedHeight: 100,
@@ -51,10 +44,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   child: SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 16,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -73,23 +63,15 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 12),
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "أهلاً،",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.white70,
-                                        ),
+                                        'greeting'.tr,
+                                        style: TextStyle(fontSize: 12, color: Colors.white70),
                                       ),
                                       Text(
                                         "محمد",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                                       ),
                                     ],
                                   ),
@@ -135,11 +117,10 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-
           SliverList(
             delegate: SliverChildListDelegate([
               const SizedBox(height: 16),
-
+              // Search bar
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Container(
@@ -160,48 +141,32 @@ class HomeScreen extends StatelessWidget {
                     style: TextStyle(color: primaryTextColor),
                     textAlign: TextAlign.right,
                     decoration: InputDecoration(
-                      hintText: "ابحث عن طبيب أو تخصص...",
+                      hintText: 'search_hint'.tr,
                       hintStyle: TextStyle(color: hintColor),
                       prefixIcon: Icon(Icons.tune, color: appColor.primary),
-                      suffixIcon: Icon(
-                        Icons.search,
-                        color: Colors.grey.shade400,
-                      ),
+                      suffixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 16,
-                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
-
+              // Specialties
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "التخصصات",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: primaryTextColor,
-                      ),
+                      'specialties'.tr,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
                     ),
                     TextButton(
-                      onPressed: () {
-                        Get.toNamed(AppRoutes.specialtiesScreen);
-                      },
+                      onPressed: () => Get.toNamed(AppRoutes.specialtiesScreen),
                       child: Text(
-                        "عرض الكل",
-                        style: TextStyle(
-                          color: Colors.amber,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                        'view_all'.tr,
+                        style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold, fontSize: 14),
                       ),
                     ),
                   ],
@@ -236,20 +201,12 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: Icon(
-                              spec.icon,
-                              color: appColor.primary,
-                              size: 28,
-                            ),
+                            child: Icon(spec.icon, color: appColor.primary, size: 28),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             spec.name,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: appColor.primary,
-                            ),
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: appColor.primary),
                           ),
                         ],
                       ),
@@ -258,220 +215,174 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-
-      
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 24),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(
-        "الأطباء الموصى بهم",
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: primaryTextColor,
-        ),
-      ),
-      TextButton(
-        onPressed: () {
-            Get.toNamed(AppRoutes.allDoctors);
-
-        },
-        child: Text(
-          "عرض الكل",
-          style: TextStyle(
-            color: Colors.amber,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    ],
-  ),
-),
-const SizedBox(height: 12),
-SizedBox(
-  height: 170, 
-  child: ListView.builder(
-    scrollDirection: Axis.horizontal,
-    padding: const EdgeInsets.symmetric(horizontal: 24),
-    itemCount: controller.recommendedDoctors.length,
-    itemBuilder: (context, index) {
-      final doctor = controller.recommendedDoctors[index];
-      return Container(
-        width: 150,
-        margin: const EdgeInsets.only(right: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(
-                doctor.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: Colors.grey.shade300,
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.grey,
-                    size: 40,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 100, 
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: isDarkMode
-                          ? [
-                              appColor.primary.withOpacity(0.9),
-                              Colors.transparent,
-                            ]
-                          : [
-                              appColor.primary.withOpacity(0.9),
-                              Colors.transparent,
-                            ],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
-                  ),
-                ),
-              ),
+              // Recommended Doctors
               Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      doctor.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12, 
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 4,
-                            color: Colors.black38,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      'recommended_doctors'.tr,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
                     ),
-                    Text(
-                      doctor.specialty,
-                      style: const TextStyle(
-                        fontSize: 10, 
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 3,
-                            color: Colors.black38,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
+                    TextButton(
+                      onPressed: () => Get.toNamed(AppRoutes.allDoctors),
+                      child: Text(
+                        'view_all'.tr,
+                        style: TextStyle(color: Colors.amber, fontSize: 14, fontWeight: FontWeight.bold),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.star,
-                              color: Colors.amber,
-                              size: 10, 
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              doctor.rating.toString(),
-                              style: const TextStyle(
-                                fontSize: 12, 
-                                fontWeight: FontWeight.bold,
-                                color: Colors.amber,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          "${doctor.price} ل.س",
-                          style: const TextStyle(
-                            fontSize: 10, 
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                blurRadius: 3,
-                                color: Colors.black38,
-                                offset: Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.25),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                            ),
-                          ),
-                          child: const Text(
-                            "احجز",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10, // ✅ أكبر
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      );
-    },
-  ),
-),
-const SizedBox(height: 10),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 170,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  itemCount: controller.recommendedDoctors.length,
+                  itemBuilder: (context, index) {
+                    final doctor = controller.recommendedDoctors[index];
+                    return Container(
+                      width: 150,
+                      margin: const EdgeInsets.only(right: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.network(
+                              doctor.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                color: Colors.grey.shade300,
+                                child: const Icon(Icons.person, color: Colors.grey, size: 40),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: isDarkMode
+                                        ? [appColor.primary.withOpacity(0.9), Colors.transparent]
+                                        : [appColor.primary.withOpacity(0.9), Colors.transparent],
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    doctor.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      shadows: [
+                                        Shadow(blurRadius: 4, color: Colors.black38, offset: Offset(0, 1)),
+                                      ],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    doctor.specialty,
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.white,
+                                      shadows: [
+                                        Shadow(blurRadius: 3, color: Colors.black38, offset: Offset(0, 1)),
+                                      ],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.star, color: Colors.amber, size: 10),
+                                          const SizedBox(width: 2),
+                                          Text(
+                                            doctor.rating.toString(),
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.amber,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        "${doctor.price} ل.س",
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                          shadows: [
+                                            Shadow(blurRadius: 3, color: Colors.black38, offset: Offset(0, 1)),
+                                          ],
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.25),
+                                          borderRadius: BorderRadius.circular(14),
+                                          border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                        ),
+                                        child: Text(
+                                          'book'.tr,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Latest posts
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  "آخر منشورات الأطباء",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: primaryTextColor,
-                  ),
+                  'latest_posts'.tr,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryTextColor),
                 ),
               ),
               const SizedBox(height: 12),
@@ -508,16 +419,13 @@ const SizedBox(height: 10),
                                 children: [
                                   CircleAvatar(
                                     radius: 20,
-                                    backgroundImage: NetworkImage(
-                                      post.doctorImageUrl,
-                                    ),
+                                    backgroundImage: NetworkImage(post.doctorImageUrl),
                                     onBackgroundImageError: (_, __) {},
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           post.doctorName,
@@ -528,37 +436,24 @@ const SizedBox(height: 10),
                                         ),
                                         Text(
                                           post.timeAgo,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.grey.shade400,
-                                          ),
+                                          style: TextStyle(fontSize: 10, color: Colors.grey.shade400),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.more_horiz,
-                                    color: Colors.grey.shade400,
-                                    size: 20,
-                                  ),
+                                  Icon(Icons.more_horiz, color: Colors.grey.shade400, size: 20),
                                 ],
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 post.content,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade700,
-                                  height: 1.5,
-                                ),
+                                style: TextStyle(fontSize: 12, color: Colors.grey.shade700, height: 1.5),
                               ),
                             ],
                           ),
                         ),
                         ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                            bottom: Radius.circular(24),
-                          ),
+                          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
                           child: Image.network(
                             post.imageUrl,
                             height: 180,
@@ -567,11 +462,7 @@ const SizedBox(height: 10),
                             errorBuilder: (_, __, ___) => Container(
                               height: 180,
                               color: Colors.grey.shade200,
-                              child: const Icon(
-                                Icons.image_outlined,
-                                color: Colors.grey,
-                                size: 48,
-                              ),
+                              child: const Icon(Icons.image_outlined, color: Colors.grey, size: 48),
                             ),
                           ),
                         ),
@@ -581,47 +472,27 @@ const SizedBox(height: 10),
                             children: [
                               Row(
                                 children: [
-                                  Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.grey.shade400,
-                                    size: 20,
-                                  ),
+                                  Icon(Icons.favorite_border, color: Colors.grey.shade400, size: 20),
                                   const SizedBox(width: 4),
                                   Text(
                                     post.likes.toString(),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryTextColor,
-                                    ),
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: primaryTextColor),
                                   ),
                                 ],
                               ),
                               const SizedBox(width: 16),
                               Row(
                                 children: [
-                                  Icon(
-                                    Icons.comment_outlined,
-                                    color: Colors.grey.shade400,
-                                    size: 20,
-                                  ),
+                                  Icon(Icons.comment_outlined, color: Colors.grey.shade400, size: 20),
                                   const SizedBox(width: 4),
                                   Text(
                                     post.comments.toString(),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryTextColor,
-                                    ),
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: primaryTextColor),
                                   ),
                                 ],
                               ),
                               const Spacer(),
-                              Icon(
-                                Icons.share_outlined,
-                                color: Colors.grey.shade400,
-                                size: 20,
-                              ),
+                              Icon(Icons.share_outlined, color: Colors.grey.shade400, size: 20),
                             ],
                           ),
                         ),
@@ -644,24 +515,9 @@ class WaveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final path = Path();
     path.lineTo(0, size.height - 30);
-    path.quadraticBezierTo(
-      size.width * 0.15,
-      size.height,
-      size.width * 0.35,
-      size.height - 25,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.55,
-      size.height - 50,
-      size.width * 0.75,
-      size.height - 20,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.9,
-      size.height - 5,
-      size.width,
-      size.height - 30,
-    );
+    path.quadraticBezierTo(size.width * 0.15, size.height, size.width * 0.35, size.height - 25);
+    path.quadraticBezierTo(size.width * 0.55, size.height - 50, size.width * 0.75, size.height - 20);
+    path.quadraticBezierTo(size.width * 0.9, size.height - 5, size.width, size.height - 30);
     path.lineTo(size.width, 0);
     path.close();
     return path;

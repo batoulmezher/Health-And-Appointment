@@ -1,6 +1,7 @@
 // lib/screens/all_doctors_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/constant/colors.dart';
 import 'package:health_appointment_app/controller/doctor_filter_controller.dart';
 import 'package:health_appointment_app/controller/home_controller.dart';
@@ -63,11 +64,7 @@ class AllDoctorsScreen extends StatelessWidget {
                             children: [
                               IconButton(
                                 padding: EdgeInsets.zero,
-                                icon: const Icon(
-                                  Icons.arrow_back_ios_new,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
+                                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 24),
                                 onPressed: () {
                                   Get.delete<DoctorFilterController>(tag: 'doctorFilter');
                                   Get.back();
@@ -75,7 +72,7 @@ class AllDoctorsScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                specialtyName ?? 'جميع الأطباء',
+                                specialtyName ?? 'all_doctors'.tr,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 28,
@@ -87,7 +84,7 @@ class AllDoctorsScreen extends StatelessWidget {
                           ),
                           Obx(
                             () => Text(
-                              '${filterController.filteredDoctors.length} طبيب',
+                              '${filterController.filteredDoctors.length} ${'doctor_singular'.tr}',
                               style: const TextStyle(
                                 color: Colors.white70,
                                 fontSize: 16,
@@ -104,11 +101,9 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
           ),
-
           SliverToBoxAdapter(
             child: _buildFilterBar(filterController, isDarkMode),
           ),
-
           Obx(
             () => SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -125,6 +120,9 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
+  // ============================================================
+  // Filter Bar - Updated with translations
+  // ============================================================
   Widget _buildFilterBar(DoctorFilterController controller, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -133,11 +131,10 @@ class AllDoctorsScreen extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            // ===== فلتر السعر =====
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedPriceSort.value == 'بدون ترتيب'
-                    ? 'السعر'
+                    ? 'price'.tr
                     : controller.selectedPriceSort.value,
                 icon: Icons.attach_money,
                 onTap: () => _showPriceMenu(controller),
@@ -146,11 +143,10 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedGender.value == 'الكل'
-                    ? 'الجنس'
+                    ? 'gender'.tr
                     : controller.selectedGender.value,
                 icon: Icons.person,
                 onTap: () => _showGenderMenu(controller),
@@ -159,11 +155,10 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedGovernorate.value == 'الكل'
-                    ? 'المحافظة'
+                    ? 'governorate'.tr
                     : controller.selectedGovernorate.value,
                 icon: Icons.location_on,
                 onTap: () => _showGovernorateMenu(controller),
@@ -172,12 +167,11 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedRating.value > 0
                     ? '${controller.selectedRating.value}★+'
-                    : 'التقييم',
+                    : 'rating'.tr,
                 icon: Icons.star,
                 onTap: () => _showRatingMenu(controller),
                 isDarkMode: isDarkMode,
@@ -185,10 +179,11 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
             Obx(
               () => _buildFilterChip(
-                label: controller.showFavoritesOnly.value ? 'المفضلة ✓' : 'المفضلة',
+                label: controller.showFavoritesOnly.value
+                    ? 'favorites'.tr + ' ✓'
+                    : 'favorites'.tr,
                 icon: controller.showFavoritesOnly.value
                     ? Icons.favorite
                     : Icons.favorite_border,
@@ -200,7 +195,6 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
             GestureDetector(
               onTap: controller.resetFilters,
               child: Container(
@@ -208,20 +202,14 @@ class AllDoctorsScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.red.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.red.withOpacity(0.3),
-                  ),
+                  border: Border.all(color: Colors.red.withOpacity(0.3)),
                 ),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.clear,
-                      color: Colors.red[400],
-                      size: 16,
-                    ),
+                    Icon(Icons.clear, color: Colors.red[400], size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      'إعادة تعيين',
+                      'reset'.tr,
                       style: TextStyle(
                         color: Colors.red[400],
                         fontSize: 12,
@@ -292,6 +280,9 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
+  // ============================================================
+  // Filter Menus - Updated with translations
+  // ============================================================
   void _showPriceMenu(DoctorFilterController controller) {
     Get.bottomSheet(
       Container(
@@ -303,13 +294,13 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'ترتيب حسب السعر',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              'sort_by_price'.tr,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildOptionTile(
-              title: 'بدون ترتيب',
+              title: 'no_sort'.tr,
               onTap: () {
                 controller.selectedPriceSort.value = 'بدون ترتيب';
                 Get.back();
@@ -317,7 +308,7 @@ class AllDoctorsScreen extends StatelessWidget {
               isSelected: controller.selectedPriceSort.value == 'بدون ترتيب',
             ),
             _buildOptionTile(
-              title: 'السعر: منخفض ← مرتفع',
+              title: 'low_to_high'.tr,
               onTap: () {
                 controller.selectedPriceSort.value = 'السعر: منخفض ← مرتفع';
                 Get.back();
@@ -325,7 +316,7 @@ class AllDoctorsScreen extends StatelessWidget {
               isSelected: controller.selectedPriceSort.value == 'السعر: منخفض ← مرتفع',
             ),
             _buildOptionTile(
-              title: 'السعر: مرتفع ← منخفض',
+              title: 'high_to_low'.tr,
               onTap: () {
                 controller.selectedPriceSort.value = 'السعر: مرتفع ← منخفض';
                 Get.back();
@@ -349,14 +340,14 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'اختر الجنس',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              'select_gender'.tr,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ...controller.genders.map(
               (gender) => _buildOptionTile(
-                title: gender,
+                title: gender == 'الكل' ? 'all'.tr : gender,
                 onTap: () {
                   controller.selectedGender.value = gender;
                   Get.back();
@@ -381,14 +372,14 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'اختر المحافظة',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              'select_governorate'.tr,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             ...controller.uniqueGovernorates.map(
               (gov) => _buildOptionTile(
-                title: gov,
+                title: gov == 'الكل' ? 'all'.tr : gov,
                 onTap: () {
                   controller.selectedGovernorate.value = gov;
                   Get.back();
@@ -413,13 +404,13 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'اختر التقييم',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              'select_rating'.tr,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildOptionTile(
-              title: 'الكل',
+              title: 'all'.tr,
               onTap: () {
                 controller.selectedRating.value = 0.0;
                 Get.back();
@@ -427,7 +418,7 @@ class AllDoctorsScreen extends StatelessWidget {
               isSelected: controller.selectedRating.value == 0.0,
             ),
             _buildOptionTile(
-              title: '4★ فأكثر',
+              title: 'rating_4_plus'.tr,
               onTap: () {
                 controller.selectedRating.value = 4.0;
                 Get.back();
@@ -435,7 +426,7 @@ class AllDoctorsScreen extends StatelessWidget {
               isSelected: controller.selectedRating.value == 4.0,
             ),
             _buildOptionTile(
-              title: '4.5★ فأكثر',
+              title: 'rating_4_5_plus'.tr,
               onTap: () {
                 controller.selectedRating.value = 4.5;
                 Get.back();
@@ -462,6 +453,9 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
+  // ============================================================
+  // Doctor Card
+  // ============================================================
   Widget _buildDoctorCard(
     Doctor doctor,
     bool isDarkMode,
@@ -525,10 +519,7 @@ class AllDoctorsScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   doctor.specialty,
-                  style: TextStyle(
-                    color: subTextColor,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(color: subTextColor, fontSize: 13),
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -537,10 +528,7 @@ class AllDoctorsScreen extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       doctor.rating.toString(),
-                      style: TextStyle(
-                        color: subTextColor,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: subTextColor, fontSize: 12),
                     ),
                     const SizedBox(width: 16),
                     Icon(
@@ -551,10 +539,7 @@ class AllDoctorsScreen extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       doctor.availableTime,
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                     ),
                   ],
                 ),
@@ -562,38 +547,26 @@ class AllDoctorsScreen extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: appColor.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         doctor.governorate,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: appColor.primary,
-                        ),
+                        style: TextStyle(fontSize: 10, color: appColor.primary),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.amber.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         doctor.gender,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.amber[700],
-                        ),
+                        style: TextStyle(fontSize: 10, color: Colors.amber[700]),
                       ),
                     ),
                   ],
@@ -621,10 +594,12 @@ class AllDoctorsScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        onPressed: () {},
-                        child: const Text(
-                          "احجز",
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        onPressed: () {
+                          Get.toNamed(AppRoutes.doctorProfileScreen);
+                        },
+                        child: Text(
+                          'book_now'.tr,
+                          style: const TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ),
                     ),
@@ -655,6 +630,9 @@ class AllDoctorsScreen extends StatelessWidget {
   }
 }
 
+// ============================================================
+// WaveClipper
+// ============================================================
 class WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

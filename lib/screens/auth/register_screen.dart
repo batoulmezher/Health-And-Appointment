@@ -171,18 +171,14 @@ class RegisterScreen extends StatelessWidget {
                 BuildDropDown(value:controller.selectedGender , items: ["M", "F"], label: "الجنس", onChanged: controller.selectedGender, primaryTextColor: primaryTextColor, fillColor: fillColor),
               
                 const SizedBox(height: 16),
-                // فصيلة الدم
                 BuildDropDown(value: controller.selectedBloodType, items: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"], label: "فصيلة الدم", onChanged:  controller.setBloodType, primaryTextColor: primaryTextColor, fillColor: fillColor,),
                
                 const SizedBox(height: 24),
-                // قسم: الملف الطبي
                 _buildSectionTitle("الملف الطبي", primaryTextColor),
                 const SizedBox(height: 16),
-                // هل تعاني من مرض مزمن؟
                 BuildYesNoQuestion(question: "هل تعاني من مرض مزمن؟", value: controller.hasChronicDisease, onChanged: controller.setHasChronicDisease, primaryTextColor: primaryTextColor),
                
                 const SizedBox(height: 12),
-                // إذا نعم، ما هو؟
                 Obx(
                   () => controller.hasChronicDisease.value
                       ? 

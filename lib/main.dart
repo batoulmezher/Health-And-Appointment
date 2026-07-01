@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
           );
         },
 
-        initialRoute: AppRoutes.mainScreen,
+        initialRoute: AppRoutes.settingScreen,
         getPages: pages,
       ),
     );
