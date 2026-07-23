@@ -10,6 +10,7 @@ static const String specialtiesScreen = '/specialtiesScreen';
 static const String allDoctors = '/allDoctors';
 static const String otpRegister = '/otpRegister';
 static const String doctorProfileScreen = '/doctorProfileScreen';
+static const String appointmentScreen = '/appointmentScreen';
 
 static const String completeProfile = '/completeProfile';
 static const String mainScreen = '/mainScreen';

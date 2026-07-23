@@ -1,66 +1,48 @@
+// lib/controller/specialties_controller.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../models/specialty_model.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:health_appointment_app/models/specialty_model.dart';
+import 'package:health_appointment_app/services/specialties_service.dart';
 
 class SpecialtiesController extends GetxController {
   final searchController = TextEditingController();
-  var filteredSpecialties = <SpecialtyModel>[].obs;
+  final SpecialtiesService _specialtiesService = SpecialtiesService();
 
-  final List<SpecialtyModel> allSpecialties = [
-    SpecialtyModel(
-      name: 'جراحة القلب',
-      icon: Icons.favorite,
-      doctorCount: 45,
-      imageUrl: 'https://images.unsplash.com/photo-1628595351029-d4cbc4c7a1e1?w=150&h=150&fit=crop',
-    ),
-    SpecialtyModel(
-      name: 'طب الأطفال',
-      icon: Icons.child_care,
-      doctorCount: 62,
-      imageUrl: 'https://images.unsplash.com/photo-1581056771107-24ca5f033842?w=150&h=150&fit=crop',
-    ),
-    SpecialtyModel(
-      name: 'طب الأسنان',
-      icon: Icons.medical_services,
-      doctorCount: 38,
-      imageUrl: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=150&h=150&fit=crop',
-    ),
-    SpecialtyModel(
-      name: 'الأعصاب',
-      icon: Icons.psychology,
-      doctorCount: 28,
-      imageUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=150&h=150&fit=crop',
-    ),
-    SpecialtyModel(
-      name: 'الباطنية',
-      icon: Icons.healing,
-      doctorCount: 55,
-      imageUrl: 'https://images.unsplash.com/photo-1583912267553-b9e9d0f4dc19?w=150&h=150&fit=crop',
-    ),
-    SpecialtyModel(
-      name: 'جراحة العظام',
-      icon: Icons.accessibility_new,
-      doctorCount: 33,
-      imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=150&h=150&fit=crop',
-    ),
-    SpecialtyModel(
-      name: 'طب العيون',
-      icon: Icons.visibility,
-      doctorCount: 41,
-      imageUrl: 'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=150&h=150&fit=crop',
-    ),
-    SpecialtyModel(
-      name: 'الجلدية',
-      icon: Icons.spa,
-      doctorCount: 25,
-      imageUrl: 'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?w=150&h=150&fit=crop',
-    ),
-  ];
+  var allSpecialties = <SpecialtyModel>[].obs;
+  var filteredSpecialties = <SpecialtyModel>[].obs;
+  var isLoading = false.obs;
+  var errorMessage = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
-    filteredSpecialties.value = allSpecialties;
+    fetchSpecialties();
+  }
+
+  Future<void> fetchSpecialties() async {
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    try {
+      final result = await _specialtiesService.getSpecialties();
+      if (result != null && result.isNotEmpty) {
+        allSpecialties.value = result;
+        filteredSpecialties.value = result;
+        print("✅ Specialties loaded: ${result.length}");
+      } else {
+        if (GetStorage().read('token') == null) {
+          errorMessage.value = 'يرجى تسجيل الدخول مرة أخرى';
+        } else {
+          errorMessage.value = 'لم نتمكن من تحميل التخصصات';
+        }
+      }
+    } catch (e) {
+      errorMessage.value = 'حدث خطأ أثناء تحميل البيانات';
+      print("❌ Specialties fetch error: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void filterSpecialties(String query) {
@@ -69,8 +51,24 @@ class SpecialtiesController extends GetxController {
       return;
     }
     filteredSpecialties.value = allSpecialties
-        .where((spec) => spec.name.contains(query))
+        .where((spec) => spec.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
+  }
+
+  IconData getIconForSpecialty(String name) {
+    final lowerName = name.toLowerCase();
+    if (lowerName.contains('cardio') || lowerName.contains('heart')) return Icons.favorite;
+    if (lowerName.contains('derma') || lowerName.contains('skin')) return Icons.spa;
+    if (lowerName.contains('neuro') || lowerName.contains('brain')) return Icons.psychology;
+    if (lowerName.contains('ophthal') || lowerName.contains('eye')) return Icons.visibility;
+    if (lowerName.contains('pediat') || lowerName.contains('child')) return Icons.child_care;
+    if (lowerName.contains('ortho') || lowerName.contains('bone')) return Icons.accessibility_new;
+    if (lowerName.contains('psych') || lowerName.contains('mental')) return Icons.mood;
+    if (lowerName.contains('dent') || lowerName.contains('tooth')) return Icons.medical_services;
+    if (lowerName.contains('ent') || lowerName.contains('ear')) return Icons.hearing;
+    if (lowerName.contains('general') || lowerName.contains('family')) return Icons.local_hospital;
+    if (lowerName.contains('emergency')) return Icons.emergency;
+    return Icons.medical_services;
   }
 
   @override

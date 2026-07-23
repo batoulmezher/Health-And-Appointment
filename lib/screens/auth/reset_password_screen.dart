@@ -12,7 +12,6 @@ class ResetPasswordScreen extends StatelessWidget {
     final controller = Get.put(ResetPasswordController());
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    // الألوان حسب الوضع
     final primaryTextColor = isDarkMode
         ? Colors.white
         : appColor.appColor.primary;
@@ -281,7 +280,6 @@ class ResetPasswordScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          // التذييل
           Column(
             children: [
               Text(

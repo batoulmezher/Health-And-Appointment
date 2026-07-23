@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_appointment_app/Routes/pages.dart';
-import '../../screens/auth/otp_verification_screen.dart';
+import 'package:health_appointment_app/services/auth/forget_password_services.dart';
 
 class ForgetPasswordController extends GetxController {
-  final emailOrPhoneController = TextEditingController();
-
+  final emailController = TextEditingController();
+  final ForgetPasswordServices _forgetPasswordServices = ForgetPasswordServices();
   var isLoading = false.obs;
 
-  void sendResetCode() {
-    if (emailOrPhoneController.text.isEmpty) {
+  Future<void> sendResetCode() async {
+    final String email = emailController.text.trim();
+
+    if (email.isEmpty) {
       Get.snackbar(
         'تنبيه',
-        'يرجى إدخال البريد الإلكتروني أو رقم الهاتف',
+        'يرجى إدخال البريد الإلكتروني',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+      );
+      return;
+    }
+
+    if (!GetUtils.isEmail(email)) {
+      Get.snackbar(
+        'تنبيه',
+        'يرجى إدخال بريد إلكتروني صحيح',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade900,
@@ -22,29 +35,53 @@ class ForgetPasswordController extends GetxController {
 
     isLoading.value = true;
 
-    Future.delayed(const Duration(seconds: 2), () {
-      isLoading.value = false;
-      
-      Get.snackbar(
-        'نجاح',
-        'تم إرسال رمز الاستعادة إلى بريدك الإلكتروني',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green.shade100,
-        colorText: Colors.green.shade900,
+    try {
+      final response = await _forgetPasswordServices.postForgetPasswordData(
+        email: email,
       );
 
-      Get.toNamed(
-        AppRoutes.otpVerification,
-        arguments: {
-          'emailOrPhone': emailOrPhoneController.text.trim(),
-        },
+      if (response != null && response['status'] == 'success') {
+       
+        Get.snackbar(
+          "نجاح",
+          response['message'] ?? "تم إرسال رمز التحقق إلى بريدك الإلكتروني",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade900,
+        );
+
+        await Future.delayed(const Duration(seconds: 1));
+        Get.toNamed(
+          AppRoutes.otpVerification,
+          arguments: email, 
+        );
+      } else {
+        String errorMessage = response?['message'] ?? "حدث خطأ أثناء إرسال الرمز";
+        Get.snackbar(
+          "فشل الإرسال",
+          errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade900,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "خطأ",
+        "حدث خطأ في الاتصال بالخادم: $e",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
       );
-    });
+      print("❌ Error (sendResetCode): $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   @override
   void onClose() {
-    emailOrPhoneController.dispose();
+    emailController.dispose();
     super.onClose();
   }
 }

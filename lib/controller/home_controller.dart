@@ -1,71 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../models/doctor_model.dart';
-import '../models/post_model.dart';
-import '../models/specialization_model.dart';
+import 'package:health_appointment_app/models/doctor_model.dart';
+import 'package:health_appointment_app/models/post_model.dart';
+import 'package:health_appointment_app/models/specialty_model.dart';
+import 'package:health_appointment_app/services/home_service.dart';
 
 class HomeController extends GetxController {
   final searchController = TextEditingController();
+  final HomeService _homeService = HomeService();
 
-  final List<Specialization> specializations = [
-    Specialization(name: "العقل", icon: Icons.psychology),
-    Specialization(name: "الأسنان", icon: Icons.medical_services),
-    Specialization(name: "الأطفال", icon: Icons.child_care),
-    Specialization(name: "الباطنية", icon: Icons.healing),
-  ];
-
-  final List<Doctor> recommendedDoctors = [
-    Doctor(
-      name: "د. أحمد خالد",
-      specialty: "جراحة العظام",
-      rating: 4.9,
-      price: 150000,
-      imageUrl: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=400&fit=crop&crop=face",
-      availableTime: "8:00 ص - 2:00 م",
-      gender: "ذكر",
-      governorate: "دمشق",
-    ),
-    Doctor(
-      name: "د. سارة المنصوري",
-      specialty: "طب الأطفال",
-      rating: 4.8,
-      price: 200000,
-      imageUrl: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face",
-      availableTime: "10:00 ص - 4:00 م",
-      gender: "أنثى",
-      governorate: "حلب",
-    ),
-    Doctor(
-      name: "د. ماجد السيد",
-      specialty: "جراحة القلب",
-      rating: 4.7,
-      price: 180000,
-      imageUrl: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&h=400&fit=crop&crop=face",
-      availableTime: "9:00 ص - 3:00 م",
-      gender: "ذكر",
-      governorate: "دمشق",
-    ),
-    Doctor(
-      name: "د. ليلى حسن",
-      specialty: "الجلدية",
-      rating: 4.9,
-      price: 160000,
-      imageUrl: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&crop=face",
-      availableTime: "11:00 ص - 5:00 م",
-      gender: "أنثى",
-      governorate: "حمص",
-    ),
-    Doctor(
-      name: "د. خالد العتيبي",
-      specialty: "الأعصاب",
-      rating: 4.6,
-      price: 220000,
-      imageUrl: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&h=400&fit=crop&crop=face",
-      availableTime: "1:00 م - 7:00 م",
-      gender: "ذكر",
-      governorate: "اللاذقية",
-    ),
-  ];
+  var doctors = <Data>[].obs;
+  var specialties = <SpecialtyModel>[].obs;
+  var isLoading = false.obs;
+  var errorMessage = ''.obs;
 
   final List<Post> recentPosts = [
     Post(
@@ -78,6 +25,57 @@ class HomeController extends GetxController {
       imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop",
     ),
   ];
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchAllData();
+  }
+
+  Future<void> fetchAllData() async {
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    try {
+      final results = await Future.wait([
+        _homeService.getDoctors(),
+        _homeService.getHomeSpecialties(),
+      ]);
+
+      if (results[0] != null && results[0] is List) {
+        doctors.value = results[0] as List<Data>;
+      }
+
+      if (results[1] != null && results[1] is List) {
+        specialties.value = results[1] as List<SpecialtyModel>;
+        print("✅ Specialties loaded: ${specialties.length}");
+      }
+
+      if (doctors.isEmpty && specialties.isEmpty) {
+        errorMessage.value = 'لا توجد بيانات حالياً';
+      }
+    } catch (e) {
+      errorMessage.value = 'حدث خطأ أثناء تحميل البيانات';
+      print("❌ Home fetch error: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  IconData getIconForSpecialty(String name) {
+    final lowerName = name.toLowerCase();
+    if (lowerName.contains('cardio')) return Icons.favorite;
+    if (lowerName.contains('derma')) return Icons.spa;
+    if (lowerName.contains('neuro')) return Icons.psychology;
+    if (lowerName.contains('ophthal')) return Icons.visibility;
+    if (lowerName.contains('pediat')) return Icons.child_care;
+    if (lowerName.contains('ortho')) return Icons.accessibility_new;
+    if (lowerName.contains('psych')) return Icons.mood;
+    if (lowerName.contains('dent')) return Icons.medical_services;
+    if (lowerName.contains('ent')) return Icons.hearing;
+    if (lowerName.contains('general')) return Icons.local_hospital;
+    return Icons.medical_services;
+  }
 
   @override
   void onClose() {

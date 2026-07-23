@@ -103,7 +103,6 @@ class RegisterScreen extends StatelessWidget {
                   text: "الاسم الكامل",
                 ),
                 const SizedBox(height: 16),
-                // رقم الهاتف
                 AuthTextField(
                   controller: controller.phoneController,
                   hintText: "+963 935 000 000",
@@ -151,19 +150,19 @@ class RegisterScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child:
-                      AuthTextField(controller: controller.heightController, hintText: "170",  obscureText: false, text: "الطول (سم)"),
+                      AuthTextField(controller: controller.heightController, hintText: "170",  obscureText: false, text: "الطول (سم)",keyboardType: TextInputType.number,),
                    
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child:
-                      AuthTextField(controller: controller.weightController, hintText: "70", obscureText: false, text: "الوزن (كغم)"),
+                      AuthTextField(controller: controller.weightController, hintText: "70", obscureText: false, text: "الوزن (كغم)",keyboardType: TextInputType.number),
                      
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                AuthTextField(controller: controller.ageController, hintText: "30", obscureText: false, text: "العمر"),
+                AuthTextField(controller: controller.ageController, hintText: "30", obscureText: false, text: "العمر",keyboardType: TextInputType.number),
                
                 const SizedBox(height: 24),
                 _buildSectionTitle("معلومات إضافية", primaryTextColor),

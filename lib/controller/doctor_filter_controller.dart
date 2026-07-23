@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import '../models/doctor_model.dart';
 
 class DoctorFilterController extends GetxController {
-  final List<Doctor> allDoctors;
-  var filteredDoctors = <Doctor>[].obs;
+  final List<DoctorModel> allDoctors;
+  var filteredDoctors = <DoctorModel>[].obs;
+
   var selectedGender = 'الكل'.obs;
   var selectedGovernorate = 'الكل'.obs;
   var selectedRating = 0.0.obs;
@@ -23,28 +24,53 @@ class DoctorFilterController extends GetxController {
   }
 
   void applyFilters() {
-    List<Doctor> result = List.from(allDoctors);
+    List<DoctorModel> result = List.from(allDoctors);
 
+    // Filter by Gender (from user.gender)
     if (selectedGender.value != 'الكل') {
-      result = result.where((d) => d.gender == selectedGender.value).toList();
+      result = result.where((d) {
+        final gender = d.data?.user?.gender;
+        return gender == selectedGender.value;
+      }).toList();
     }
 
+    // Filter by Governorate (from clinicLocation)
     if (selectedGovernorate.value != 'الكل') {
-      result = result.where((d) => d.governorate == selectedGovernorate.value).toList();
+      result = result.where((d) {
+        final location = d.data?.clinicLocation ?? '';
+        return location.contains(selectedGovernorate.value);
+      }).toList();
     }
 
+    // Filter by Rating (ratingAverage)
     if (selectedRating.value > 0) {
-      result = result.where((d) => d.rating >= selectedRating.value).toList();
+      result = result.where((d) {
+        final rating = double.tryParse(d.data?.ratingAverage ?? '0') ?? 0;
+        return rating >= selectedRating.value;
+      }).toList();
     }
 
+    // Filter by Favorites
     if (showFavoritesOnly.value) {
-      result = result.where((d) => favoriteIds.contains(d.name)).toList();
+      result = result.where((d) {
+        final name = d.data?.user?.fullName ?? '';
+        return favoriteIds.contains(name);
+      }).toList();
     }
 
+    // Sort by Price (consultationFee)
     if (selectedPriceSort.value == 'السعر: منخفض ← مرتفع') {
-      result.sort((a, b) => a.price.compareTo(b.price));
+      result.sort((a, b) {
+        final priceA = double.tryParse(a.data?.consultationFee ?? '0') ?? 0;
+        final priceB = double.tryParse(b.data?.consultationFee ?? '0') ?? 0;
+        return priceA.compareTo(priceB);
+      });
     } else if (selectedPriceSort.value == 'السعر: مرتفع ← منخفض') {
-      result.sort((a, b) => b.price.compareTo(a.price));
+      result.sort((a, b) {
+        final priceA = double.tryParse(a.data?.consultationFee ?? '0') ?? 0;
+        final priceB = double.tryParse(b.data?.consultationFee ?? '0') ?? 0;
+        return priceB.compareTo(priceA);
+      });
     }
 
     filteredDoctors.value = result;
@@ -56,6 +82,7 @@ class DoctorFilterController extends GetxController {
     } else {
       favoriteIds.add(doctorName);
     }
+    applyFilters();
   }
 
   void resetFilters() {
@@ -67,8 +94,11 @@ class DoctorFilterController extends GetxController {
   }
 
   List<String> get uniqueGovernorates {
-    final set = allDoctors.map((d) => d.governorate).toSet();
-    return ['الكل', ...set];
+    final locations = allDoctors
+        .map((d) => d.data?.clinicLocation ?? '')
+        .where((loc) => loc.isNotEmpty)
+        .toSet();
+    return ['الكل', ...locations];
   }
 
   List<String> get genders => ['الكل', 'ذكر', 'أنثى'];

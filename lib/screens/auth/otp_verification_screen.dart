@@ -74,7 +74,7 @@ class OtpVerificationScreen extends StatelessWidget {
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 24),
                 Directionality(
                   textDirection: TextDirection.ltr,
                   child: PinCodeTextField(
@@ -93,7 +93,7 @@ class OtpVerificationScreen extends StatelessWidget {
                       shape: PinCodeFieldShape.box,
                       borderRadius: BorderRadius.circular(16),
                       fieldHeight: 70,
-                      fieldWidth: 60,
+                      fieldWidth: 55,
                       activeFillColor: fillColor,
                       inactiveFillColor: fillColor,
                       selectedFillColor: fillColor,

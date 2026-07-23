@@ -73,36 +73,50 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                   '2'.tr,
+                    '2'.tr,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: secondaryTextColor),
                   ),
                   const SizedBox(height: 40),
-                  
-                  const SizedBox(height: 6),
-                  AuthTextField(controller: controller.emailController, hintText:  "example@elite.com",icon:Icons.email_outlined ,obscureText: false,text: '3'.tr,keyboardType:TextInputType.emailAddress ,),
-                 
-                  const SizedBox(height: 20),
-                  
-                  Obx(
-                    () => AuthTextField(controller: controller.passwordController, hintText: "••••••••", icon: Icons.lock_outline,keyboardType: TextInputType.visiblePassword, obscureText: controller.obscurePassword.value,text:  '4'.tr,suffixIcon:IconButton(
-                          icon: Icon(
-                            controller.obscurePassword.value
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: appColor.appColor.primary,
-                          ),
-                          
-                          onPressed: () => controller.obscurePassword.toggle(),
-                        ), )
 
+                  const SizedBox(height: 6),
+                  AuthTextField(
+                    controller: controller.emailController,
+                    hintText: "example@elite.com",
+                    icon: Icons.email_outlined,
+                    obscureText: false,
+                    text: '3'.tr,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Obx(
+                    () => AuthTextField(
+                      controller: controller.passwordController,
+                      hintText: "••••••••",
+                      icon: Icons.lock_outline,
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: controller.obscurePassword.value,
+                      text: '4'.tr,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          controller.obscurePassword.value
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: appColor.appColor.primary,
+                        ),
+
+                        onPressed: () => controller.obscurePassword.toggle(),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       TextButton(
                         onPressed: () {
-                          Get.toNamed(AppRoutes.forgotPassword);
+                          controller.goToForgetPassword();
                         },
                         child: Text(
                           '5'.tr,
@@ -114,38 +128,34 @@ class LoginScreen extends StatelessWidget {
                       ),
                       const Spacer(),
                       Directionality(
-                         textDirection: TextDirection.rtl,
+                        textDirection: TextDirection.rtl,
                         child: Row(
                           children: [
-                            Obx(
-                              () => Checkbox(
-                                value: controller.rememberMe.value,
-                                onChanged: (val) =>
-                                    controller.rememberMe.toggle(),
-                                activeColor: appColor.appColor.primary,
-                                shape: const CircleBorder(),
-                              ),
+                          Obx(
+                            () => Checkbox(
+                              value: controller.rememberMe.value,
+                              onChanged: (_) => controller.toggleRememberMe(),
+                              activeColor: appColor.appColor.primary,
+                              shape: const CircleBorder(),
                             ),
-                            Text(
-                            '6'.tr,
-                              style: TextStyle(color: primaryTextColor),
-                            ),
-                          ],
+                          ),
+                          Text(
+                            "تذكرني",
+                            style: TextStyle(color: primaryTextColor),
+                          ),
+                        ],
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  AuthButton(onPressed: controller.login, text:'1'.tr),
-                 
+                  AuthButton(onPressed: controller.login, text: '1'.tr),
+
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '7'.tr,
-                        style: TextStyle(color: secondaryTextColor),
-                      ),
+                      Text('7'.tr, style: TextStyle(color: secondaryTextColor)),
                       TextButton(
                         onPressed: controller.goToRegister,
                         child: Text(
@@ -167,7 +177,7 @@ class LoginScreen extends StatelessWidget {
             Column(
               children: [
                 Text(
-               'under'.tr,
+                  'under'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, color: secondaryTextColor),
                 ),
@@ -175,12 +185,11 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    
                     Text(" | ", style: TextStyle(color: secondaryTextColor)),
                     TextButton(
                       onPressed: () {},
                       child: Text(
-                       'terms'.tr,
+                        'terms'.tr,
                         style: TextStyle(
                           fontSize: 12,
                           color: secondaryTextColor,

@@ -105,7 +105,7 @@ class ForgetPasswordScreen extends StatelessWidget {
               children: [
                
                 AuthTextField(
-                  controller: controller.emailOrPhoneController,
+                  controller: controller.emailController,
                   hintText: "example@clinical.com",
                   obscureText: false,
                   text: "البريد الإلكتروني   ",

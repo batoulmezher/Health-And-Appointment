@@ -1,10 +1,14 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/Routes/routes.dart';
+import 'package:health_appointment_app/controller/doctors_controller.dart';
+import 'package:health_appointment_app/controller/home_controller.dart';
 import 'package:health_appointment_app/controller/settings_controller.dart';
+import 'package:health_appointment_app/controller/user_controller.dart';
 import 'package:health_appointment_app/translations/app_translations.dart';
 
 void main() async {
@@ -12,15 +16,20 @@ void main() async {
   await GetStorage.init();
 
   Get.put(SettingsController());
-  runApp(MyApp());
+  
+  Get.lazyPut(() => UserController(), fenix: true);
+  Get.lazyPut(() => HomeController(), fenix: true);
+  Get.lazyPut(() => DoctorsController(), fenix: true);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-  final SettingsController settings = Get.find();
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final SettingsController settings = Get.find<SettingsController>();
+
     return Obx(
       () => GetMaterialApp(
         debugShowCheckedModeBanner: false,
@@ -42,7 +51,7 @@ class MyApp extends StatelessWidget {
 
         builder: (context, child) {
           return Directionality(
-            textDirection: TextDirection.ltr, 
+            textDirection: TextDirection.ltr,
             child: MediaQuery(
               data: MediaQuery.of(context).copyWith(
                 textScaleFactor: settings.fontSize.value / 16,
@@ -52,7 +61,7 @@ class MyApp extends StatelessWidget {
           );
         },
 
-        initialRoute: AppRoutes.settingScreen,
+        initialRoute: AppRoutes.login,
         getPages: pages,
       ),
     );

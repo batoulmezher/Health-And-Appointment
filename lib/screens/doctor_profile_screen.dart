@@ -1,6 +1,7 @@
 // lib/screens/doctor_profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/constant/colors.dart' as appColor;
 import 'package:health_appointment_app/controller/doctor_profile_controller.dart';
 
@@ -25,9 +26,7 @@ class DoctorProfileScreen extends StatelessWidget {
       backgroundColor: backgroundColor,
       body: CustomScrollView(
         slivers: [
-          // ============================================================
-          // SliverAppBar: Full Width Photo with Overlay
-          // ============================================================
+       
           SliverAppBar(
             automaticallyImplyLeading: false,
             expandedHeight: screenHeight * 0.4,
@@ -143,7 +142,6 @@ class DoctorProfileScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  // ---- TabBar ----
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -459,15 +457,10 @@ class DoctorProfileScreen extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.snackbar(
-                        'success'.tr,
-                        'booked_successfully'.tr,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.green.shade100,
-                        colorText: Colors.green.shade900,
-                      );
+                     Get.toNamed(AppRoutes.appointmentScreen);
                     },
                     style: ElevatedButton.styleFrom(
+                      
                       backgroundColor: appColor.appColor.primary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),

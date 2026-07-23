@@ -90,6 +90,9 @@ class AppTranslations extends Translations {
 'nav_appointments': 'الحجوزات',
 'nav_messages': 'الرسائل',
 'nav_profile': 'ملفي',
+'appointment_title': 'حجز موعد',
+'appointment_subtitle': 'اختر التاريخ والوقت المناسبين للاستشارة السريرية',
+'back_to_dashboard': 'العودة إلى الرئيسية',
 
     },
     /////////////////////
@@ -179,6 +182,9 @@ class AppTranslations extends Translations {
 'nav_appointments': 'Appointments',
 'nav_messages': 'Messages',
 'nav_profile': 'Profile',
+'appointment_title': 'Book Appointment',
+'appointment_subtitle': 'Select your preferred date and time for a clinical consultation.',
+'back_to_dashboard': 'Back to Dashboard',
 
     },
   };

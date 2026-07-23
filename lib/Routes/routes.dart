@@ -2,6 +2,7 @@
 import 'package:get/get.dart';
 import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/screens/all_doctors_screen.dart';
+import 'package:health_appointment_app/screens/appointment_screen.dart';
 import 'package:health_appointment_app/screens/auth/forget_password_screen.dart';
 import 'package:health_appointment_app/screens/auth/login_screen.dart';
 import 'package:health_appointment_app/screens/auth/otp_register_screen.dart';
@@ -74,4 +75,8 @@ final pages = <GetPage>[
     name: AppRoutes.doctorProfileScreen,
     page: () => DoctorProfileScreen(),
   ),
+  GetPage(
+  name: AppRoutes.appointmentScreen,
+  page: () => const AppointmentScreen(),
+),
 ];

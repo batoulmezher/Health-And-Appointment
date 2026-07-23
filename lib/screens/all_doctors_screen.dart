@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/constant/colors.dart';
 import 'package:health_appointment_app/controller/doctor_filter_controller.dart';
-import 'package:health_appointment_app/controller/home_controller.dart';
+import 'package:health_appointment_app/controller/doctors_controller.dart';
 import 'package:health_appointment_app/models/doctor_model.dart';
+import 'package:health_appointment_app/widgets/selver_app_bar.dart';
 
 class AllDoctorsScreen extends StatelessWidget {
   final String? specialtyName;
@@ -14,115 +15,125 @@ class AllDoctorsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeController = Get.find<HomeController>();
+    final doctorsController = Get.find<DoctorsController>();
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    final List<Doctor> doctors = specialtyName != null
-        ? homeController.recommendedDoctors
-            .where((d) => d.specialty.contains(specialtyName!))
-            .toList()
-        : homeController.recommendedDoctors;
+    final String? specialty = specialtyName ?? Get.arguments as String?;
 
-    final filterController = Get.put(
-      DoctorFilterController(allDoctors: doctors),
-      tag: 'doctorFilter',
-    );
+    if (doctorsController.allDoctors.isEmpty && !doctorsController.isLoading.value) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        doctorsController.fetchAllDoctors();
+      });
+    }
 
-    final backgroundColor = isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC);
+    return Obx(() {
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            expandedHeight: 160,
-            pinned: true,
-            backgroundColor: Colors.transparent,
-            flexibleSpace: FlexibleSpaceBar(
-              background: ClipPath(
-                clipper: WaveClipper(),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        appColor.primary,
-                        appColor.primary.withBlue(30).withGreen(20),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+      if (doctorsController.isLoading.value) {
+        return Scaffold(
+          backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+
+      if (doctorsController.errorMessage.isNotEmpty) {
+        return Scaffold(
+          backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 60, color: Colors.grey),
+                const SizedBox(height: 16),
+                Text(
+                  doctorsController.errorMessage.value,
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white70 : Colors.grey.shade700,
                   ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Spacer(),
-                          Row(
-                            children: [
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 24),
-                                onPressed: () {
-                                  Get.delete<DoctorFilterController>(tag: 'doctorFilter');
-                                  Get.back();
-                                },
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                specialtyName ?? 'all_doctors'.tr,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Obx(
-                            () => Text(
-                              '${filterController.filteredDoctors.length} ${'doctor_singular'.tr}',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                        ],
-                      ),
-                    ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => doctorsController.fetchAllDoctors(),
+                  child: const Text('إعادة المحاولة'),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      final List<DoctorModel> filteredDoctors = specialty != null && specialty.isNotEmpty
+          ? doctorsController.allDoctors.where((d) {
+              final docSpecialty = d.data?.specialty?.name ?? '';
+              return docSpecialty.toLowerCase() == specialty.toLowerCase();
+            }).toList()
+          : doctorsController.allDoctors;
+
+      if (filteredDoctors.isEmpty) {
+        return Scaffold(
+          backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.medical_information, size: 60, color: Colors.grey),
+                const SizedBox(height: 16),
+                Text(
+                  specialty != null
+                      ? 'لا يوجد أطباء في تخصص $specialty'
+                      : 'لا يوجد أطباء',
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.white70 : Colors.grey.shade700,
+                    fontSize: 16,
                   ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      final filterController = Get.put(
+        DoctorFilterController(allDoctors: filteredDoctors),
+        tag: 'doctorFilter',
+      );
+
+      final backgroundColor = isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC);
+
+      return Scaffold(
+        backgroundColor: backgroundColor,
+        body: CustomScrollView(
+          slivers: [
+            ProAppBar(
+              title: specialty ?? 'all_doctors'.tr,
+              subtitle: '${filterController.filteredDoctors.length} ${'doctor_singular'.tr}',
+              onBackPressed: () {
+                Get.delete<DoctorFilterController>(tag: 'doctorFilter');
+                Get.back();
+              },
+            ),
+            SliverToBoxAdapter(
+              child: _buildFilterBar(filterController, isDarkMode),
+            ),
+            Obx(
+              () => SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final doctor = filterController.filteredDoctors[index];
+                    return _buildDoctorCard(doctor, isDarkMode, filterController);
+                  },
+                  childCount: filterController.filteredDoctors.length,
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: _buildFilterBar(filterController, isDarkMode),
-          ),
-          Obx(
-            () => SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final doctor = filterController.filteredDoctors[index];
-                  return _buildDoctorCard(doctor, isDarkMode, filterController);
-                },
-                childCount: filterController.filteredDoctors.length,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
-  // ============================================================
-  // Filter Bar - Updated with translations
-  // ============================================================
+  // ---- Filter Bar ----
   Widget _buildFilterBar(DoctorFilterController controller, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -181,15 +192,9 @@ class AllDoctorsScreen extends StatelessWidget {
             const SizedBox(width: 8),
             Obx(
               () => _buildFilterChip(
-                label: controller.showFavoritesOnly.value
-                    ? 'favorites'.tr + ' ✓'
-                    : 'favorites'.tr,
-                icon: controller.showFavoritesOnly.value
-                    ? Icons.favorite
-                    : Icons.favorite_border,
-                onTap: () {
-                  controller.showFavoritesOnly.toggle();
-                },
+                label: controller.showFavoritesOnly.value ? 'favorites'.tr + ' ✓' : 'favorites'.tr,
+                icon: controller.showFavoritesOnly.value ? Icons.favorite : Icons.favorite_border,
+                onTap: () => controller.showFavoritesOnly.toggle(),
                 isDarkMode: isDarkMode,
                 isActive: controller.showFavoritesOnly.value,
               ),
@@ -256,11 +261,7 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 14,
-              color: isActive ? Colors.amber : Colors.grey.shade600,
-            ),
+            Icon(icon, size: 14, color: isActive ? Colors.amber : Colors.grey.shade600),
             const SizedBox(width: 4),
             Text(
               label,
@@ -280,9 +281,7 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
-  // Filter Menus - Updated with translations
-  // ============================================================
+  // ---- Filter Menus ----
   void _showPriceMenu(DoctorFilterController controller) {
     Get.bottomSheet(
       Container(
@@ -294,10 +293,7 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'sort_by_price'.tr,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('sort_by_price'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             _buildOptionTile(
               title: 'no_sort'.tr,
@@ -340,10 +336,7 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'select_gender'.tr,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('select_gender'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             ...controller.genders.map(
               (gender) => _buildOptionTile(
@@ -372,10 +365,7 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'select_governorate'.tr,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('select_governorate'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             ...controller.uniqueGovernorates.map(
               (gov) => _buildOptionTile(
@@ -404,10 +394,7 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'select_rating'.tr,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            Text('select_rating'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             _buildOptionTile(
               title: 'all'.tr,
@@ -453,16 +440,23 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
-  // Doctor Card
-  // ============================================================
+  // ---- Doctor Card ----
   Widget _buildDoctorCard(
-    Doctor doctor,
+    DoctorModel doctorModel,
     bool isDarkMode,
     DoctorFilterController filterController,
   ) {
+    final data = doctorModel.data;
+    final user = data?.user;
+    final specialty = data?.specialty;
     final textColor = isDarkMode ? Colors.white : const Color(0xFF1A1A2E);
     final subTextColor = isDarkMode ? Colors.white70 : Colors.grey.shade600;
+    final name = user?.fullName ?? 'طبيب';
+    final specialtyName = specialty?.name ?? 'تخصص غير معروف';
+    final rating = data?.ratingAverage ?? '0.0';
+    final price = data?.consultationFee ?? '0';
+    final imageUrl = user?.profilePictureUrl ?? '';
+    final availableTime = _formatWorkingHours(data?.workingDaysHours);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -492,7 +486,7 @@ class AllDoctorsScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        doctor.name,
+                        name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
@@ -502,12 +496,12 @@ class AllDoctorsScreen extends StatelessWidget {
                     ),
                     Obx(
                       () => GestureDetector(
-                        onTap: () => filterController.toggleFavorite(doctor.name),
+                        onTap: () => filterController.toggleFavorite(name),
                         child: Icon(
-                          filterController.favoriteIds.contains(doctor.name)
+                          filterController.favoriteIds.contains(name)
                               ? Icons.favorite
                               : Icons.favorite_border,
-                          color: filterController.favoriteIds.contains(doctor.name)
+                          color: filterController.favoriteIds.contains(name)
                               ? Colors.red
                               : Colors.grey.shade400,
                           size: 22,
@@ -518,7 +512,7 @@ class AllDoctorsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  doctor.specialty,
+                  specialtyName,
                   style: TextStyle(color: subTextColor, fontSize: 13),
                 ),
                 const SizedBox(height: 10),
@@ -527,7 +521,7 @@ class AllDoctorsScreen extends StatelessWidget {
                     const Icon(Icons.star, color: Colors.amber, size: 15),
                     const SizedBox(width: 4),
                     Text(
-                      doctor.rating.toString(),
+                      rating,
                       style: TextStyle(color: subTextColor, fontSize: 12),
                     ),
                     const SizedBox(width: 16),
@@ -538,7 +532,7 @@ class AllDoctorsScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      doctor.availableTime,
+                      availableTime,
                       style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                     ),
                   ],
@@ -553,7 +547,7 @@ class AllDoctorsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        doctor.governorate,
+                        data?.clinicLocation ?? 'غير محدد',
                         style: TextStyle(fontSize: 10, color: appColor.primary),
                       ),
                     ),
@@ -565,7 +559,7 @@ class AllDoctorsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        doctor.gender,
+                        user?.gender ?? 'غير محدد',
                         style: TextStyle(fontSize: 10, color: Colors.amber[700]),
                       ),
                     ),
@@ -575,7 +569,7 @@ class AllDoctorsScreen extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      '${doctor.price} ل.س',
+                      '${double.tryParse(price)?.toInt() ?? price} ل.س',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -595,7 +589,7 @@ class AllDoctorsScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Get.toNamed(AppRoutes.doctorProfileScreen);
+                          Get.toNamed(AppRoutes.doctorProfileScreen, arguments: data?.id);
                         },
                         child: Text(
                           'book_now'.tr,
@@ -612,7 +606,9 @@ class AllDoctorsScreen extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Image.network(
-              doctor.imageUrl,
+              imageUrl.isNotEmpty
+                  ? imageUrl
+                  : 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}&background=001b48&color=fff&size=150',
               width: 90,
               height: 130,
               fit: BoxFit.cover,
@@ -620,7 +616,16 @@ class AllDoctorsScreen extends StatelessWidget {
                 width: 90,
                 height: 130,
                 color: Colors.grey.shade300,
-                child: const Icon(Icons.person, size: 40),
+                child: Center(
+                  child: Text(
+                    name.isNotEmpty ? name[0].toUpperCase() : '?',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -628,39 +633,13 @@ class AllDoctorsScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-// ============================================================
-// WaveClipper
-// ============================================================
-class WaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height - 30);
-    path.quadraticBezierTo(
-      size.width * 0.15,
-      size.height,
-      size.width * 0.35,
-      size.height - 25,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.55,
-      size.height - 50,
-      size.width * 0.75,
-      size.height - 20,
-    );
-    path.quadraticBezierTo(
-      size.width * 0.9,
-      size.height - 5,
-      size.width,
-      size.height - 30,
-    );
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
+  String _formatWorkingHours(WorkingDaysHours? hours) {
+    if (hours == null) return 'غير متاح';
+    final day = hours.monday ?? hours.sunday ?? hours.tuesday ?? hours.wednesday ?? hours.thursday;
+    if (day != null && day.start != null && day.end != null) {
+      return '${day.start} - ${day.end}';
+    }
+    return 'غير متاح';
   }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
