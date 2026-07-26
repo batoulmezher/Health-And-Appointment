@@ -1,4 +1,3 @@
-// lib/services/auth/sign_up_otp_service.dart
 import 'package:dio/dio.dart';
 import 'package:health_appointment_app/api/api.dart';
 
@@ -55,7 +54,6 @@ class SignUpOtpService {
       };
     }
   }
-  // resend otp
    Future<Map<String, dynamic>?> resendOtp({
     required String email,
   }) async {

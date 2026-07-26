@@ -14,13 +14,11 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: Text('settings'.tr), centerTitle: true),
       body: ListView(
         children: [
-          //      قسم اللغة
           _buildSectionHeader('language'.tr),
           _buildLanguageOptions(),
 
           const Divider(),
 
-          //      قسم الثيم
           _buildSectionHeader('theme'.tr),
           _buildThemeOptions(),
 

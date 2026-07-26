@@ -12,7 +12,6 @@ class AppointmentService {
     return _storage.read('token');
   }
 
-  // إنشاء موعد جديد
   Future<Map<String, dynamic>?> createAppointment({
     required int doctorId,
     required String appointmentDate,

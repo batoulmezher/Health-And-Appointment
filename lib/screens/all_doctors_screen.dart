@@ -636,9 +636,6 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
-  // HELPERS
-  // ============================================================
   String _formatWorkingHours(WorkingDaysHours? hours) {
     if (hours == null) return 'غير متاح';
     final day = hours.monday ?? hours.sunday ?? hours.tuesday ?? hours.wednesday ?? hours.thursday;

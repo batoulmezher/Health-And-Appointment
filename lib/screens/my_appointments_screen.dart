@@ -48,7 +48,7 @@ class MyAppointmentsScreen extends StatelessWidget {
                 Text(
                   controller.errorMessage.value,
                   style: TextStyle(color: subTextColor),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.center,  
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -322,7 +322,7 @@ class MyAppointmentsScreen extends StatelessWidget {
         content: const Text('هل أنت متأكد من رغبتك في إلغاء هذا الموعد؟'),
         actions: [
           TextButton(
-            onPressed: () => Get.back(), // إغلاق الـ Dialog
+            onPressed: () => Get.back(), 
             child: const Text('تراجع'),
           ),
           TextButton(

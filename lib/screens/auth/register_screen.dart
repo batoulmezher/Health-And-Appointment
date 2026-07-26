@@ -224,7 +224,7 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-///////////////////////////////
+
 Widget _buildSectionTitle(String title, Color color) {
   return Text(
     title,

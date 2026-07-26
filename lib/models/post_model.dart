@@ -9,7 +9,7 @@ class PostModel {
   final int commentsCount;
   final bool isLikedByCurrentUser;
   final DateTime createdAt;
-  final bool hasImage; // optional: if posts can have images
+  final bool hasImage; 
 
   PostModel({
     required this.id,
@@ -47,7 +47,6 @@ class PostModel {
   }
 }
 
-// Doctor class (simplified version for posts)
 class Doctor {
   final int? id;
   final int? userId;

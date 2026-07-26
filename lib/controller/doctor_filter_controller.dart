@@ -58,7 +58,6 @@ class DoctorFilterController extends GetxController {
       }).toList();
     }
 
-    // Sort by Price (consultationFee)
     if (selectedPriceSort.value == 'السعر: منخفض ← مرتفع') {
       result.sort((a, b) {
         final priceA = double.tryParse(a.data?.consultationFee ?? '0') ?? 0;
