@@ -33,8 +33,9 @@ class Data {
   String? licenseNumber;
   int? specialtyId;
   String? bio;
+  String? city;
   String? ratingAverage;
-  String? yearsOfExperience;
+  int? yearsOfExperience;
   String? clinicLocation;
   String? consultationFee;
   WorkingDaysHours? workingDaysHours;
@@ -54,6 +55,7 @@ class Data {
     this.ratingAverage,
     this.yearsOfExperience,
     this.clinicLocation,
+    this.city,
     this.consultationFee,
     this.workingDaysHours,
     this.status,
@@ -71,8 +73,10 @@ class Data {
     specialtyId = json['specialty_id'];
     bio = json['bio'];
     ratingAverage = json['rating_average'];
-    yearsOfExperience = json['years_of_experience'];
+yearsOfExperience = json['years_of_experience']; 
     clinicLocation = json['clinic_location'];
+        city = json['city'];
+
     consultationFee = json['consultation_fee'];
     workingDaysHours = json['working_days_hours'] != null
         ? WorkingDaysHours.fromJson(json['working_days_hours'])
@@ -102,6 +106,8 @@ class Data {
     json['rating_average'] = ratingAverage;
     json['years_of_experience'] = yearsOfExperience;
     json['clinic_location'] = clinicLocation;
+        json['city'] = city;
+
     json['consultation_fee'] = consultationFee;
     if (workingDaysHours != null) {
       json['working_days_hours'] = workingDaysHours!.toJson();

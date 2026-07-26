@@ -94,6 +94,8 @@ class AppTranslations extends Translations {
 'appointment_subtitle': 'اختر التاريخ والوقت المناسبين للاستشارة السريرية',
 'back_to_dashboard': 'العودة إلى الرئيسية',
 
+'search_results': 'نتائج البحث',
+
     },
     /////////////////////
     'en_US': {
@@ -185,6 +187,7 @@ class AppTranslations extends Translations {
 'appointment_title': 'Book Appointment',
 'appointment_subtitle': 'Select your preferred date and time for a clinical consultation.',
 'back_to_dashboard': 'Back to Dashboard',
+'search_results': 'Search Results',
 
     },
   };

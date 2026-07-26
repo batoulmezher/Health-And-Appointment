@@ -36,6 +36,9 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: backgroundColor,
       body: CustomScrollView(
         slivers: [
+          // ============================================================
+          // Wavy AppBar with User Profile Image
+          // ============================================================
           SliverAppBar(
             automaticallyImplyLeading: false,
             expandedHeight: 100,
@@ -65,6 +68,7 @@ class HomeScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              // User info
                               Row(
                                 children: [
                                   CircleAvatar(
@@ -102,23 +106,17 @@ class HomeScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                         'greeting'.tr,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.white70,
-                                        ),
+                                        style: TextStyle(fontSize: 12, color: Colors.white70),
                                       ),
                                       Text(
-                                        userController.userName, // ✅ اسمك الحقيقي
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
+                                        userController.userName,
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
+                              // Notification icons
                               Row(
                                 children: [
                                   Container(
@@ -159,11 +157,15 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
+
+          // ============================================================
+          // Main Content
           // ============================================================
           SliverList(
             delegate: SliverChildListDelegate([
               const SizedBox(height: 16),
-              // Search bar
+
+              // ---- Search Bar ----
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Container(
@@ -183,14 +185,22 @@ class HomeScreen extends StatelessWidget {
                     controller: controller.searchController,
                     style: TextStyle(color: primaryTextColor),
                     textAlign: TextAlign.right,
+                    onChanged: (value) => controller.search(value),
+                    onTapOutside: (event) => FocusScope.of(context).unfocus(),
                     decoration: InputDecoration(
                       hintText: 'search_hint'.tr,
                       hintStyle: TextStyle(color: hintColor),
-                      prefixIcon: Icon(Icons.tune, color: appColor.primary),
-                      suffixIcon: Icon(
-                        Icons.search,
-                        color: Colors.grey.shade400,
+                      prefixIcon: IconButton(
+                        icon: Icon(
+                          Icons.close,
+                          color: controller.searchController.text.isNotEmpty
+                              ? Colors.grey
+                              : Colors.transparent,
+                          size: 20,
+                        ),
+                        onPressed: controller.clearSearch,
                       ),
+                      suffixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 14,
@@ -201,115 +211,15 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              // Specialties
 
-Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 24),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(
-        'specialties'.tr,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: primaryTextColor,
-        ),
-      ),
-      TextButton(
-        onPressed: () => Get.toNamed(AppRoutes.specialtiesScreen),
-        child: Text(
-          'view_all'.tr,
-          style: TextStyle(
-            color: Colors.amber,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-        ),
-      ),
-    ],
-  ),
-),
-const SizedBox(height: 12),
-Obx(() {
-  if (controller.isLoading.value) {
-    return const SizedBox(
-      height: 100,
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-  if (controller.specialties.isEmpty) {
-    return const SizedBox(
-      height: 100,
-      child: Center(
-        child: Text('لا توجد تخصصات'),
-      ),
-    );
-  }
-  return SizedBox(
-    height: 100,
-    child: ListView.builder(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      itemCount: controller.specialties.length,
-      itemBuilder: (context, index) {
-        final spec = controller.specialties[index];
-        return Container(
-          width: 80,
-          margin: const EdgeInsets.only(right: 16),
-          child: Column(
-            children: [
-              Container(
-                height: 64,
-                width: 64,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: appColor.primary),
-                  boxShadow: [
-                    BoxShadow(
-                      color: appColor.primary.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  controller.getIconForSpecialty(spec.name),
-                  color: appColor.primary,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                spec.name,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: appColor.primary,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        );
-      },
-    ),
-  );
-}),
-const SizedBox(height: 10),
-              // Recommended Doctors
+              // ---- Specialties ----
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'recommended_doctors'.tr,
+                      'specialties'.tr,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -317,13 +227,13 @@ const SizedBox(height: 10),
                       ),
                     ),
                     TextButton(
-                      onPressed: () => Get.toNamed(AppRoutes.allDoctors),
+                      onPressed: () => Get.toNamed(AppRoutes.specialtiesScreen),
                       child: Text(
                         'view_all'.tr,
                         style: TextStyle(
                           color: Colors.amber,
-                          fontSize: 14,
                           fontWeight: FontWeight.bold,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -331,46 +241,148 @@ const SizedBox(height: 10),
                 ),
               ),
               const SizedBox(height: 12),
-              // Loading / Error / Data states
               Obx(() {
                 if (controller.isLoading.value) {
                   return const SizedBox(
-                    height: 170,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    height: 100,
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                if (controller.doctors.isEmpty && controller.errorMessage.isNotEmpty) {
-                  return SizedBox(
-                    height: 170,
-                    child: Center(
-                      child: Text(
-                        controller.errorMessage.value,
-                        style: TextStyle(color: secondaryTextColor),
-                      ),
-                    ),
-                  );
-                }
-                if (controller.doctors.isEmpty) {
-                  return SizedBox(
-                    height: 170,
-                    child: Center(
-                      child: Text(
-                        'لا يوجد أطباء حالياً',
-                        style: TextStyle(color: secondaryTextColor),
-                      ),
-                    ),
+                if (controller.specialties.isEmpty) {
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(child: Text('لا توجد تخصصات')),
                   );
                 }
                 return SizedBox(
-                  height: 170,
+                  height: 100,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    itemCount: controller.doctors.length,
+                    itemCount: controller.specialties.length,
                     itemBuilder: (context, index) {
-                      final doctorData = controller.doctors[index];
+                      final spec = controller.specialties[index];
+                      return Container(
+                        width: 80,
+                        margin: const EdgeInsets.only(right: 16),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 64,
+                              width: 64,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: appColor.primary),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: appColor.primary.withOpacity(0.3),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                controller.getIconForSpecialty(spec.name),
+                                color: appColor.primary,
+                                size: 28,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              spec.name,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: appColor.primary,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }),
+              const SizedBox(height: 10),
+
+              // ---- Recommended Doctors / Search Results ----
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      (controller.isSearching.value || controller.searchResults.isNotEmpty)
+                          ? 'نتائج البحث'
+                          : 'recommended_doctors'.tr,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                    if (!controller.isSearching.value && controller.searchResults.isEmpty)
+                      TextButton(
+                        onPressed: () => Get.toNamed(AppRoutes.allDoctors),
+                        child: Text(
+                          'view_all'.tr,
+                          style: TextStyle(
+                            color: Colors.amber,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // ---- Doctor List (Search Results or Normal) ----
+              SizedBox(
+                height: 170,
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (controller.isSearching.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (controller.searchResults.isEmpty &&
+    controller.searchController.text.isNotEmpty &&
+    !controller.isSearching.value) {
+  return const Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.search_off, size: 40, color: Colors.grey),
+        SizedBox(height: 8),
+        Text(
+          'لا توجد نتائج',
+          style: TextStyle(color: Colors.grey),
+        ),
+      ],
+    ),
+  );
+}
+
+                  final doctorList = controller.displayedDoctors;
+                  if (doctorList.isEmpty) {
+                    return const Center(
+                      child: Text('لا يوجد أطباء'),
+                    );
+                  }
+
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    itemCount: doctorList.length,
+                    itemBuilder: (context, index) {
+                      final doctorData = doctorList[index];
                       final user = doctorData.user;
                       final specialty = doctorData.specialty;
                       final name = user?.fullName ?? 'طبيب';
@@ -398,6 +410,7 @@ const SizedBox(height: 10),
                           child: Stack(
                             fit: StackFit.expand,
                             children: [
+                              // Doctor image
                               Image.network(
                                 imageUrl,
                                 headers: {
@@ -429,14 +442,8 @@ const SizedBox(height: 10),
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: isDarkMode
-                                          ? [
-                                              appColor.primary.withOpacity(0.9),
-                                              Colors.transparent,
-                                            ]
-                                          : [
-                                              appColor.primary.withOpacity(0.9),
-                                              Colors.transparent,
-                                            ],
+                                          ? [appColor.primary.withOpacity(0.9), Colors.transparent]
+                                          : [appColor.primary.withOpacity(0.9), Colors.transparent],
                                       begin: Alignment.bottomCenter,
                                       end: Alignment.topCenter,
                                     ),
@@ -457,11 +464,7 @@ const SizedBox(height: 10),
                                         fontSize: 12,
                                         color: Colors.white,
                                         shadows: [
-                                          Shadow(
-                                            blurRadius: 4,
-                                            color: Colors.black38,
-                                            offset: Offset(0, 1),
-                                          ),
+                                          Shadow(blurRadius: 4, color: Colors.black38, offset: Offset(0, 1)),
                                         ],
                                       ),
                                       maxLines: 1,
@@ -473,11 +476,7 @@ const SizedBox(height: 10),
                                         fontSize: 10,
                                         color: Colors.white,
                                         shadows: [
-                                          Shadow(
-                                            blurRadius: 3,
-                                            color: Colors.black38,
-                                            offset: Offset(0, 1),
-                                          ),
+                                          Shadow(blurRadius: 3, color: Colors.black38, offset: Offset(0, 1)),
                                         ],
                                       ),
                                       maxLines: 1,
@@ -488,11 +487,7 @@ const SizedBox(height: 10),
                                       children: [
                                         Row(
                                           children: [
-                                            const Icon(
-                                              Icons.star,
-                                              color: Colors.amber,
-                                              size: 10,
-                                            ),
+                                            const Icon(Icons.star, color: Colors.amber, size: 10),
                                             const SizedBox(width: 2),
                                             Text(
                                               rating,
@@ -512,20 +507,13 @@ const SizedBox(height: 10),
                                             fontWeight: FontWeight.w500,
                                             color: Colors.white,
                                             shadows: [
-                                              Shadow(
-                                                blurRadius: 3,
-                                                color: Colors.black38,
-                                                offset: Offset(0, 1),
-                                              ),
+                                              Shadow(blurRadius: 3, color: Colors.black38, offset: Offset(0, 1)),
                                             ],
                                           ),
                                         ),
                                         const Spacer(),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 4,
-                                          ),
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
                                             color: Colors.white.withOpacity(0.25),
                                             borderRadius: BorderRadius.circular(14),
@@ -563,11 +551,12 @@ const SizedBox(height: 10),
                         ),
                       );
                     },
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
               const SizedBox(height: 10),
-              // Latest posts
+
+              // ---- Latest Posts ----
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
@@ -580,161 +569,163 @@ const SizedBox(height: 10),
                 ),
               ),
               const SizedBox(height: 12),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                itemCount: controller.recentPosts.length,
-                itemBuilder: (context, index) {
-                  final post = controller.recentPosts[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: cardColor,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.grey.shade100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage: NetworkImage(
-                                      post.doctorImageUrl,
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return const SizedBox(
+                    height: 200,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                if (controller.latestPosts.isEmpty) {
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(child: Text('لا توجد منشورات حالياً')),
+                  );
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  itemCount: controller.latestPosts.length,
+                  itemBuilder: (context, index) {
+                    final post = controller.latestPosts[index];
+                    final doctor = post.doctor;
+                    final user = doctor?.user;
+                    final doctorName = user?.fullName ?? 'طبيب';
+                    final doctorImage = user?.profilePictureUrl ?? '';
+                    final content = post.content;
+                    final timeAgo = controller.getTimeAgo(post.createdAt);
+                    final likes = post.likesCount;
+                    final comments = post.commentsCount;
+                    final isLiked = post.isLikedByCurrentUser;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: cardColor,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: Colors.grey.shade100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Doctor info
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 20,
+                                      backgroundImage: doctorImage.isNotEmpty
+                                          ? NetworkImage(doctorImage)
+                                          : const NetworkImage(
+                                              'https://ui-avatars.com/api/?name=Doctor&background=001b48&color=fff&size=150',
+                                            ),
+                                      onBackgroundImageError: (_, __) {},
                                     ),
-                                    onBackgroundImageError: (_, __) {},
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          post.doctorName,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: primaryTextColor,
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            doctorName,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: primaryTextColor,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          post.timeAgo,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.grey.shade400,
+                                          Text(
+                                            timeAgo,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.grey.shade400,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Icon(
-                                    Icons.more_horiz,
-                                    color: Colors.grey.shade400,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                post.content,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade700,
-                                  height: 1.5,
+                                    Icon(Icons.more_horiz, color: Colors.grey.shade400, size: 20),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                            bottom: Radius.circular(24),
-                          ),
-                          child: Image.network(
-                            post.imageUrl,
-                            height: 180,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              height: 180,
-                              color: Colors.grey.shade200,
-                              child: const Icon(
-                                Icons.image_outlined,
-                                color: Colors.grey,
-                                size: 48,
-                              ),
+                                const SizedBox(height: 8),
+                                // Content
+                                Text(
+                                  content,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade700,
+                                    height: 1.6,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.grey.shade400,
-                                    size: 20,
+                          // Actions: like, comment, share
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    // Toggle like
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        isLiked ? Icons.favorite : Icons.favorite_border,
+                                        color: isLiked ? Colors.red : Colors.grey.shade400,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        likes.toString(),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryTextColor,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    post.likes.toString(),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryTextColor,
+                                ),
+                                const SizedBox(width: 16),
+                                Row(
+                                  children: [
+                                    Icon(Icons.comment_outlined, color: Colors.grey.shade400, size: 20),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      comments.toString(),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryTextColor,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 16),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.comment_outlined,
-                                    color: Colors.grey.shade400,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    post.comments.toString(),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: primaryTextColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Icon(
-                                Icons.share_outlined,
-                                color: Colors.grey.shade400,
-                                size: 20,
-                              ),
-                            ],
+                                  ],
+                                ),
+                                const Spacer(),
+                                Icon(Icons.share_outlined, color: Colors.grey.shade400, size: 20),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                          const SizedBox(height: 8),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }),
               const SizedBox(height: 80),
             ]),
           ),
@@ -743,6 +734,7 @@ const SizedBox(height: 10),
     );
   }
 
+  // ---- Helper: Get doctor image ----
   String _getDoctorImage(User? user) {
     final imageUrl = user?.profilePictureUrl;
     if (imageUrl != null && imageUrl.isNotEmpty) {
@@ -752,6 +744,7 @@ const SizedBox(height: 10),
     return 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}&background=001b48&color=fff&size=150';
   }
 
+  // ---- Helper: Format working hours ----
   String _formatWorkingHours(WorkingDaysHours? hours) {
     if (hours == null) return '';
     final day = hours.monday ?? hours.sunday ?? hours.tuesday ?? hours.wednesday ?? hours.thursday;
@@ -762,6 +755,7 @@ const SizedBox(height: 10),
   }
 }
 
+// ---- Wave Clipper ----
 class WaveClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

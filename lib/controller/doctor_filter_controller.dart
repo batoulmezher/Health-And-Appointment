@@ -37,7 +37,7 @@ class DoctorFilterController extends GetxController {
     // Filter by Governorate (from clinicLocation)
     if (selectedGovernorate.value != 'الكل') {
       result = result.where((d) {
-        final location = d.data?.clinicLocation ?? '';
+        final location = d.data?.city ?? '';
         return location.contains(selectedGovernorate.value);
       }).toList();
     }
@@ -95,11 +95,11 @@ class DoctorFilterController extends GetxController {
 
   List<String> get uniqueGovernorates {
     final locations = allDoctors
-        .map((d) => d.data?.clinicLocation ?? '')
+        .map((d) => d.data?.city ?? '')
         .where((loc) => loc.isNotEmpty)
         .toSet();
     return ['الكل', ...locations];
   }
 
-  List<String> get genders => ['الكل', 'ذكر', 'أنثى'];
+  List<String> get genders => ['الكل', 'M', 'F'];
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:health_appointment_app/constant/colors.dart' as appColor;
 
 class ProfileScreen extends StatelessWidget {

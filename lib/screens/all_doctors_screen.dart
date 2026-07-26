@@ -27,7 +27,6 @@ class AllDoctorsScreen extends StatelessWidget {
     }
 
     return Obx(() {
-
       if (doctorsController.isLoading.value) {
         return Scaffold(
           backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC),
@@ -35,7 +34,7 @@ class AllDoctorsScreen extends StatelessWidget {
         );
       }
 
-
+      //  Error state
       if (doctorsController.errorMessage.isNotEmpty) {
         return Scaffold(
           backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC),
@@ -63,6 +62,7 @@ class AllDoctorsScreen extends StatelessWidget {
         );
       }
 
+      //  Filter doctors by specialty (case-insensitive)
       final List<DoctorModel> filteredDoctors = specialty != null && specialty.isNotEmpty
           ? doctorsController.allDoctors.where((d) {
               final docSpecialty = d.data?.specialty?.name ?? '';
@@ -70,6 +70,7 @@ class AllDoctorsScreen extends StatelessWidget {
             }).toList()
           : doctorsController.allDoctors;
 
+      //  No doctors found
       if (filteredDoctors.isEmpty) {
         return Scaffold(
           backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC),
@@ -94,6 +95,7 @@ class AllDoctorsScreen extends StatelessWidget {
         );
       }
 
+      //  Create filter controller
       final filterController = Get.put(
         DoctorFilterController(allDoctors: filteredDoctors),
         tag: 'doctorFilter',
@@ -133,7 +135,9 @@ class AllDoctorsScreen extends StatelessWidget {
     });
   }
 
-  // ---- Filter Bar ----
+  // ============================================================
+  // FILTER BAR
+  // ============================================================
   Widget _buildFilterBar(DoctorFilterController controller, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -142,6 +146,7 @@ class AllDoctorsScreen extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
+            // ---- Price Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedPriceSort.value == 'بدون ترتيب'
@@ -154,6 +159,8 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
+
+            // ---- Gender Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedGender.value == 'الكل'
@@ -166,6 +173,8 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
+
+            // ---- Governorate Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedGovernorate.value == 'الكل'
@@ -178,6 +187,8 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
+
+            // ---- Rating Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedRating.value > 0
@@ -190,6 +201,8 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
+
+            // ---- Favorites Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.showFavoritesOnly.value ? 'favorites'.tr + ' ✓' : 'favorites'.tr,
@@ -200,6 +213,8 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
+
+            // ---- Reset Button ----
             GestureDetector(
               onTap: controller.resetFilters,
               child: Container(
@@ -231,6 +246,9 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
+  // ============================================================
+  // FILTER CHIP
+  // ============================================================
   Widget _buildFilterChip({
     required String label,
     required IconData icon,
@@ -261,7 +279,11 @@ class AllDoctorsScreen extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14, color: isActive ? Colors.amber : Colors.grey.shade600),
+            Icon(
+              icon,
+              size: 14,
+              color: isActive ? Colors.amber : Colors.grey.shade600,
+            ),
             const SizedBox(width: 4),
             Text(
               label,
@@ -281,7 +303,9 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
-  // ---- Filter Menus ----
+  // ============================================================
+  // FILTER MENUS
+  // ============================================================
   void _showPriceMenu(DoctorFilterController controller) {
     Get.bottomSheet(
       Container(
@@ -297,26 +321,17 @@ class AllDoctorsScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildOptionTile(
               title: 'no_sort'.tr,
-              onTap: () {
-                controller.selectedPriceSort.value = 'بدون ترتيب';
-                Get.back();
-              },
+              onTap: () { controller.selectedPriceSort.value = 'بدون ترتيب'; Get.back(); },
               isSelected: controller.selectedPriceSort.value == 'بدون ترتيب',
             ),
             _buildOptionTile(
               title: 'low_to_high'.tr,
-              onTap: () {
-                controller.selectedPriceSort.value = 'السعر: منخفض ← مرتفع';
-                Get.back();
-              },
+              onTap: () { controller.selectedPriceSort.value = 'السعر: منخفض ← مرتفع'; Get.back(); },
               isSelected: controller.selectedPriceSort.value == 'السعر: منخفض ← مرتفع',
             ),
             _buildOptionTile(
               title: 'high_to_low'.tr,
-              onTap: () {
-                controller.selectedPriceSort.value = 'السعر: مرتفع ← منخفض';
-                Get.back();
-              },
+              onTap: () { controller.selectedPriceSort.value = 'السعر: مرتفع ← منخفض'; Get.back(); },
               isSelected: controller.selectedPriceSort.value == 'السعر: مرتفع ← منخفض',
             ),
           ],
@@ -341,10 +356,7 @@ class AllDoctorsScreen extends StatelessWidget {
             ...controller.genders.map(
               (gender) => _buildOptionTile(
                 title: gender == 'الكل' ? 'all'.tr : gender,
-                onTap: () {
-                  controller.selectedGender.value = gender;
-                  Get.back();
-                },
+                onTap: () { controller.selectedGender.value = gender; Get.back(); },
                 isSelected: controller.selectedGender.value == gender,
               ),
             ),
@@ -362,18 +374,15 @@ class AllDoctorsScreen extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: ListView(
+         // mainAxisSize: MainAxisSize.min,
           children: [
             Text('select_governorate'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             ...controller.uniqueGovernorates.map(
               (gov) => _buildOptionTile(
                 title: gov == 'الكل' ? 'all'.tr : gov,
-                onTap: () {
-                  controller.selectedGovernorate.value = gov;
-                  Get.back();
-                },
+                onTap: () { controller.selectedGovernorate.value = gov; Get.back(); },
                 isSelected: controller.selectedGovernorate.value == gov,
               ),
             ),
@@ -398,26 +407,17 @@ class AllDoctorsScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _buildOptionTile(
               title: 'all'.tr,
-              onTap: () {
-                controller.selectedRating.value = 0.0;
-                Get.back();
-              },
+              onTap: () { controller.selectedRating.value = 0.0; Get.back(); },
               isSelected: controller.selectedRating.value == 0.0,
             ),
             _buildOptionTile(
               title: 'rating_4_plus'.tr,
-              onTap: () {
-                controller.selectedRating.value = 4.0;
-                Get.back();
-              },
+              onTap: () { controller.selectedRating.value = 4.0; Get.back(); },
               isSelected: controller.selectedRating.value == 4.0,
             ),
             _buildOptionTile(
               title: 'rating_4_5_plus'.tr,
-              onTap: () {
-                controller.selectedRating.value = 4.5;
-                Get.back();
-              },
+              onTap: () { controller.selectedRating.value = 4.5; Get.back(); },
               isSelected: controller.selectedRating.value == 4.5,
             ),
           ],
@@ -440,7 +440,9 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
-  // ---- Doctor Card ----
+  // ============================================================
+  // DOCTOR CARD
+  // ============================================================
   Widget _buildDoctorCard(
     DoctorModel doctorModel,
     bool isDarkMode,
@@ -547,7 +549,7 @@ class AllDoctorsScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        data?.clinicLocation ?? 'غير محدد',
+                        data?.city ?? 'غير محدد',
                         style: TextStyle(fontSize: 10, color: appColor.primary),
                       ),
                     ),
@@ -634,6 +636,9 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
+  // ============================================================
+  // HELPERS
+  // ============================================================
   String _formatWorkingHours(WorkingDaysHours? hours) {
     if (hours == null) return 'غير متاح';
     final day = hours.monday ?? hours.sunday ?? hours.tuesday ?? hours.wednesday ?? hours.thursday;
