@@ -1,11 +1,13 @@
 // lib/screens/doctor_profile_screen.dart
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/constant/colors.dart' as appColor;
 import 'package:health_appointment_app/controller/doctor_profile_controller.dart';
+import 'package:health_appointment_app/screens/messages_screen.dart';
+import 'package:health_appointment_app/services/chat_service.dart';
+import 'package:health_appointment_app/widgets/post_card.dart';
 
 class DoctorProfileScreen extends StatelessWidget {
   const DoctorProfileScreen({super.key});
@@ -16,10 +18,15 @@ class DoctorProfileScreen extends StatelessWidget {
     final isDarkMode = Get.isDarkMode;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final backgroundColor = isDarkMode ? Colors.grey.shade900 : const Color(0xFFF8F9FB);
+    final backgroundColor = isDarkMode
+        ? Colors.grey.shade900
+        : const Color(0xFFF8F9FB);
     final cardColor = isDarkMode ? Colors.grey.shade800 : Colors.white;
     final textColor = isDarkMode ? Colors.white : appColor.appColor.primary;
     final subTextColor = isDarkMode ? Colors.white70 : const Color(0xFF44464F);
+    final commentBgColor = isDarkMode
+        ? Colors.grey.shade800.withOpacity(0.3)
+        : Colors.grey.shade100;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -45,7 +52,7 @@ class DoctorProfileScreen extends StatelessWidget {
                     final int? id = Get.arguments as int?;
                     if (id != null) controller.fetchDoctorDetails(id);
                   },
-                  child: const Text('إعادة المحاولة'),
+                  child: const Text('Retry'),
                 ),
               ],
             ),
@@ -54,7 +61,7 @@ class DoctorProfileScreen extends StatelessWidget {
         if (controller.doctorData.value == null) {
           return Center(
             child: Text(
-              'لا توجد بيانات للطبيب',
+              'No doctor data available',
               style: TextStyle(color: subTextColor),
             ),
           );
@@ -62,23 +69,24 @@ class DoctorProfileScreen extends StatelessWidget {
 
         final doctorData = controller.doctorData.value!;
         final user = doctorData.user;
-        final name = user?.fullName ?? 'طبيب';
-        final specialtyName = doctorData.specialty?.name ?? 'تخصص غير معروف';
+        final name = user?.fullName ?? 'Doctor';
+        final specialtyName = doctorData.specialty?.name ?? 'Unknown specialty';
         final rating = doctorData.ratingAverage ?? '0.0';
-        final bio = doctorData.bio ?? 'لا يوجد وصف';
+        final bio = doctorData.bio ?? 'No description';
         final experience = doctorData.yearsOfExperience ?? 0;
-        final clinicLocation = doctorData.clinicLocation ?? 'غير محدد';
-        final city = doctorData.city ?? 'غير محدد';
+        final clinicLocation = doctorData.clinicLocation ?? 'Not specified';
+        final city = doctorData.city ?? 'Not specified';
         final consultationFee = doctorData.consultationFee ?? '0';
-        final status = doctorData.status ?? 'غير معروف';
+        final status = doctorData.status ?? 'Unknown';
         final imageUrl = user?.profilePictureUrl ?? '';
-        final email = user?.email ?? 'غير متوفر';
-        final phone = user?.phoneNumber ?? 'غير متوفر';
-        final gender = user?.gender == 'M' ? 'ذكر' : (user?.gender == 'F' ? 'أنثى' : 'غير محدد');
+        final email = user?.email ?? 'Not available';
+        final phone = user?.phoneNumber ?? 'Not available';
+        final gender = user?.gender == 'M'
+            ? 'Male'
+            : (user?.gender == 'F' ? 'Female' : 'Not specified');
 
         return CustomScrollView(
           slivers: [
-            // ---- AppBar with Photo ----
             SliverAppBar(
               automaticallyImplyLeading: false,
               expandedHeight: screenHeight * 0.4,
@@ -135,7 +143,10 @@ class DoctorProfileScreen extends StatelessWidget {
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Colors.white,
+                          ),
                           onPressed: () => Get.back(),
                         ),
                       ),
@@ -148,7 +159,10 @@ class DoctorProfileScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.green.shade100,
                               borderRadius: BorderRadius.circular(20),
@@ -170,12 +184,19 @@ class DoctorProfileScreen extends StatelessWidget {
                               fontSize: 30,
                               fontWeight: FontWeight.bold,
                               shadows: [
-                                Shadow(blurRadius: 8, color: Colors.black38, offset: Offset(0, 2)),
+                                Shadow(
+                                  blurRadius: 8,
+                                  color: Colors.black38,
+                                  offset: Offset(0, 2),
+                                ),
                               ],
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: status == 'APPROVED'
                                   ? Colors.green.withOpacity(0.8)
@@ -183,7 +204,9 @@ class DoctorProfileScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              status == 'APPROVED' ? '✅ معتمد' : '⏳ قيد المراجعة',
+                              status == 'APPROVED'
+                                  ? 'Approved'
+                                  : 'Pending review',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -209,9 +232,11 @@ class DoctorProfileScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // ---- TabBar ----
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: Obx(
                         () => Row(
                           children: [
@@ -234,8 +259,20 @@ class DoctorProfileScreen extends StatelessWidget {
                       () => IndexedStack(
                         index: controller.selectedTab.value,
                         children: [
-                          _buildDetailsTab(controller, cardColor, textColor, subTextColor),
-                          _buildPostsTab(cardColor, textColor, subTextColor),
+                          _buildDetailsTab(
+                            controller,
+                            cardColor,
+                            textColor,
+                            subTextColor,
+                          ),
+                          _buildPostsTab(
+                              controller,
+                              cardColor,
+                              textColor,
+                              subTextColor,
+                              commentBgColor,
+                            ),
+                          
                         ],
                       ),
                     ),
@@ -263,7 +300,9 @@ class DoctorProfileScreen extends StatelessWidget {
             color: Colors.transparent,
             border: Border(
               bottom: BorderSide(
-                color: isSelected ? appColor.appColor.primary : Colors.transparent,
+                color: isSelected
+                    ? appColor.appColor.primary
+                    : Colors.transparent,
                 width: 3,
               ),
             ),
@@ -272,7 +311,9 @@ class DoctorProfileScreen extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isSelected ? appColor.appColor.primary : Colors.grey.shade500,
+              color: isSelected
+                  ? appColor.appColor.primary
+                  : Colors.grey.shade500,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               fontSize: 16,
             ),
@@ -291,23 +332,24 @@ class DoctorProfileScreen extends StatelessWidget {
     final doctorData = controller.doctorData.value!;
     final user = doctorData.user;
 
-    final name = user?.fullName ?? 'طبيب';
+    final name = user?.fullName ?? 'Doctor';
     final rating = doctorData.ratingAverage ?? '0.0';
-    final bio = doctorData.bio ?? 'لا يوجد وصف';
+    final bio = doctorData.bio ?? 'No description';
     final experience = doctorData.yearsOfExperience ?? 0;
-    final clinicLocation = doctorData.clinicLocation ?? 'غير محدد';
-    final city = doctorData.city ?? 'غير محدد';
+    final clinicLocation = doctorData.clinicLocation ?? 'Not specified';
+    final city = doctorData.city ?? 'Not specified';
     final consultationFee = doctorData.consultationFee ?? '0';
-    final status = doctorData.status ?? 'غير معروف';
-    final email = user?.email ?? 'غير متوفر';
-    final phone = user?.phoneNumber ?? 'غير متوفر';
-    final gender = user?.gender == 'M' ? 'ذكر' : (user?.gender == 'F' ? 'أنثى' : 'غير محدد');
+    final status = doctorData.status ?? 'Unknown';
+    final email = user?.email ?? 'Not available';
+    final phone = user?.phoneNumber ?? 'Not available';
+    final gender = user?.gender == 'M'
+        ? 'Male'
+        : (user?.gender == 'F' ? 'Female' : 'Not specified');
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // ---- Main Info Card ----
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -323,7 +365,6 @@ class DoctorProfileScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // ---- Bio ----
                 if (bio.isNotEmpty) ...[
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -335,7 +376,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'السيرة الذاتية',
+                          'Biography',
                           style: TextStyle(
                             fontSize: 14,
                             color: subTextColor,
@@ -356,21 +397,19 @@ class DoctorProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                 ],
-
-                // ---- Info Chips ----
                 Row(
                   children: [
                     _buildInfoChip(
                       icon: Icons.verified_outlined,
-                      label: 'الخبرة',
-                      value: '$experience سنة',
+                      label: 'Experience',
+                      value: '$experience years',
                       textColor: textColor,
                       subTextColor: subTextColor,
                     ),
                     const SizedBox(width: 8),
                     _buildInfoChip(
                       icon: Icons.star,
-                      label: 'التقييم',
+                      label: 'Rating',
                       value: '$rating ★',
                       textColor: textColor,
                       subTextColor: subTextColor,
@@ -378,19 +417,18 @@ class DoctorProfileScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     _buildInfoChip(
                       icon: Icons.attach_money,
-                      label: 'الكشفية',
-                      value: '${double.tryParse(consultationFee)?.toInt() ?? consultationFee} ل.س',
+                      label: 'Fee',
+                      value:
+                          '${double.tryParse(consultationFee)?.toInt() ?? consultationFee} SYP',
                       textColor: textColor,
                       subTextColor: subTextColor,
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                // ---- Details (full width) ----
                 _buildFullWidthDetail(
                   icon: Icons.email_outlined,
-                  label: 'البريد الإلكتروني',
+                  label: 'Email',
                   value: email,
                   textColor: textColor,
                   subTextColor: subTextColor,
@@ -398,7 +436,7 @@ class DoctorProfileScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _buildFullWidthDetail(
                   icon: Icons.phone_outlined,
-                  label: 'رقم الهاتف',
+                  label: 'Phone',
                   value: phone,
                   textColor: textColor,
                   subTextColor: subTextColor,
@@ -406,7 +444,7 @@ class DoctorProfileScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _buildFullWidthDetail(
                   icon: Icons.person_outline,
-                  label: 'الجنس',
+                  label: 'Gender',
                   value: gender,
                   textColor: textColor,
                   subTextColor: subTextColor,
@@ -414,7 +452,7 @@ class DoctorProfileScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _buildFullWidthDetail(
                   icon: Icons.location_on_outlined,
-                  label: 'العيادة',
+                  label: 'Clinic',
                   value: clinicLocation,
                   textColor: textColor,
                   subTextColor: subTextColor,
@@ -422,16 +460,17 @@ class DoctorProfileScreen extends StatelessWidget {
                 const SizedBox(height: 12),
                 _buildFullWidthDetail(
                   icon: Icons.location_city,
-                  label: 'المدينة',
+                  label: 'City',
                   value: city,
                   textColor: textColor,
                   subTextColor: subTextColor,
                 ),
                 const SizedBox(height: 16),
-
-                // ---- Status ----
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: status == 'APPROVED'
                         ? Colors.green.withOpacity(0.1)
@@ -447,15 +486,21 @@ class DoctorProfileScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        status == 'APPROVED' ? Icons.check_circle : Icons.pending,
-                        color: status == 'APPROVED' ? Colors.green : Colors.orange,
+                        status == 'APPROVED'
+                            ? Icons.check_circle
+                            : Icons.pending,
+                        color: status == 'APPROVED'
+                            ? Colors.green
+                            : Colors.orange,
                         size: 16,
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        status == 'APPROVED' ? '✅ معتمد' : '⏳ قيد المراجعة',
+                        status == 'APPROVED' ? 'Approved' : 'Pending review',
                         style: TextStyle(
-                          color: status == 'APPROVED' ? Colors.green : Colors.orange,
+                          color: status == 'APPROVED'
+                              ? Colors.green
+                              : Colors.orange,
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                         ),
@@ -464,8 +509,6 @@ class DoctorProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // ---- Follow / Chat / Star buttons with follow integration ----
                 Row(
                   children: [
                     Obx(() {
@@ -492,7 +535,7 @@ class DoctorProfileScreen extends StatelessWidget {
                                 ),
                           label: Text(
                             controller.isFollowing.value
-                                ? 'إلغاء المتابعة'
+                                ? 'Unfollow'
                                 : 'follow'.tr,
                           ),
                           style: ElevatedButton.styleFrom(
@@ -507,18 +550,51 @@ class DoctorProfileScreen extends StatelessWidget {
                       );
                     }),
                     const SizedBox(width: 12),
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: IconButton(
-                        icon: Icon(Icons.chat, color: appColor.appColor.primary),
-                        onPressed: () {},
-                      ),
-                    ),
+Container(
+  width: 48,
+  height: 48,
+  decoration: BoxDecoration(
+    border: Border.all(color: Colors.grey.shade300),
+    borderRadius: BorderRadius.circular(12),
+  ),
+  child: IconButton(
+    icon: Icon(Icons.chat, color: appColor.appColor.primary),
+    onPressed: () async {
+      // استخدم user.id الخاص بالطبيب وليس doctor.id
+      final doctorUserId = controller.doctorData.value?.user?.id;
+      if (doctorUserId == null) {
+        Get.snackbar('Error', 'Doctor user ID not found');
+        return;
+      }
+
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
+      try {
+        final conversationId = await ChatService().createConversation(doctorUserId);
+        Get.back();
+
+        if (conversationId != null) {
+          Get.to(
+            () => const MessagesScreen(),
+            arguments: {
+              'conversationId': conversationId,
+              'doctorName': controller.getFullName(),
+              'doctorImage': controller.getProfileImage(),
+            },
+          );
+        } else {
+          Get.snackbar('Error', 'Failed to create conversation');
+        }
+      } catch (e) {
+        Get.back();
+        Get.snackbar('Error', 'An error occurred: $e');
+      }
+    },
+  ),
+),
                     const SizedBox(width: 12),
                     Container(
                       width: 48,
@@ -528,7 +604,10 @@ class DoctorProfileScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: IconButton(
-                        icon: Icon(Icons.star, color: appColor.appColor.primary),
+                        icon: Icon(
+                          Icons.star,
+                          color: appColor.appColor.primary,
+                        ),
                         onPressed: () {},
                       ),
                     ),
@@ -537,20 +616,21 @@ class DoctorProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // ---- 📅 SECTION 1: WORKING DAYS & HOURS ----
-          _buildWorkingDaysSection(controller, cardColor, textColor, subTextColor),
-
+          _buildWorkingDaysSection(
+            controller,
+            cardColor,
+            textColor,
+            subTextColor,
+          ),
           const SizedBox(height: 16),
-
-          // ---- 📆 SECTION 2: AVAILABLE APPOINTMENTS ----
-          _buildAppointmentsSection(controller, cardColor, textColor, subTextColor),
-
+          _buildAppointmentsSection(
+            controller,
+            cardColor,
+            textColor,
+            subTextColor,
+          ),
           const SizedBox(height: 16),
-
-          // ---- Reviews ----
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -576,16 +656,21 @@ class DoctorProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (doctorData.reviews != null && doctorData.reviews!.isNotEmpty) ...[
-                  ...doctorData.reviews!.map((review) => _buildReviewCard(
-                    name: review.user?.fullName ?? 'مريض',
-                    date: review.createdAt ?? '',
-                    rating: review.rating ?? 5,
-                    comment: review.comment ?? '',
-                    cardColor: cardColor,
-                    textColor: textColor,
-                    subTextColor: subTextColor,
-                  )).toList(),
+                if (doctorData.reviews != null &&
+                    doctorData.reviews!.isNotEmpty) ...[
+                  ...doctorData.reviews!
+                      .map(
+                        (review) => _buildReviewCard(
+                          name: review.user?.fullName ?? 'Patient',
+                          date: review.createdAt ?? '',
+                          rating: review.rating ?? 5,
+                          comment: review.comment ?? '',
+                          cardColor: cardColor,
+                          textColor: textColor,
+                          subTextColor: subTextColor,
+                        ),
+                      )
+                      .toList(),
                 ] else ...[
                   Container(
                     padding: const EdgeInsets.all(16),
@@ -595,7 +680,7 @@ class DoctorProfileScreen extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        'لا توجد مراجعات حالياً',
+                        'No reviews yet',
                         style: TextStyle(color: subTextColor),
                       ),
                     ),
@@ -610,7 +695,6 @@ class DoctorProfileScreen extends StatelessWidget {
     );
   }
 
-  // ---- 📅 SECTION 1: WORKING DAYS & HOURS ----
   Widget _buildWorkingDaysSection(
     DoctorProfileController controller,
     Color cardColor,
@@ -642,7 +726,7 @@ class DoctorProfileScreen extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                'أيام وأوقات العمل',
+                'Working days and hours',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -654,7 +738,6 @@ class DoctorProfileScreen extends StatelessWidget {
           const SizedBox(height: 16),
           const Divider(),
           const SizedBox(height: 16),
-
           Obx(() {
             if (controller.dayNames.isEmpty) {
               return Container(
@@ -665,11 +748,8 @@ class DoctorProfileScreen extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'لا توجد أيام عمل محددة',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: subTextColor,
-                    ),
+                    'No working days specified',
+                    style: TextStyle(fontSize: 16, color: subTextColor),
                   ),
                 ),
               );
@@ -682,11 +762,13 @@ class DoctorProfileScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final dayName = controller.dayNames[index];
                 final schedule = controller.workingDaysList[index];
-                final start = schedule?.start ?? 'غير محدد';
-                final end = schedule?.end ?? 'غير محدد';
-
+                final start = schedule?.start ?? 'Not set';
+                final end = schedule?.end ?? 'Not set';
                 return Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 4,
+                  ),
                   child: Row(
                     children: [
                       const SizedBox(width: 16),
@@ -747,7 +829,6 @@ class DoctorProfileScreen extends StatelessWidget {
     );
   }
 
-  // ---- 📆 SECTION 2: AVAILABLE APPOINTMENTS ----
   Widget _buildAppointmentsSection(
     DoctorProfileController controller,
     Color cardColor,
@@ -786,7 +867,7 @@ class DoctorProfileScreen extends StatelessWidget {
                   const Icon(Icons.calendar_month, size: 18),
                   const SizedBox(width: 4),
                   Text(
-                    'أكتوبر 2023',
+                    'October 2023',
                     style: TextStyle(fontSize: 14, color: subTextColor),
                   ),
                 ],
@@ -798,7 +879,13 @@ class DoctorProfileScreen extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: List.generate(5, (index) {
-                final days = ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+                final days = [
+                  'Mon',
+                  'Tue',
+                  'Wed',
+                  'Thu',
+                  'Fri',
+                ];
                 final numbers = ['16', '17', '18', '19', '20'];
                 final isSelected = index == 0;
                 return Container(
@@ -806,7 +893,9 @@ class DoctorProfileScreen extends StatelessWidget {
                   height: 76,
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
-                    color: isSelected ? appColor.appColor.primary : Colors.grey.shade100,
+                    color: isSelected
+                        ? appColor.appColor.primary
+                        : Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
@@ -816,7 +905,9 @@ class DoctorProfileScreen extends StatelessWidget {
                         days[index],
                         style: TextStyle(
                           fontSize: 11,
-                          color: isSelected ? Colors.white : Colors.grey.shade600,
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.grey.shade600,
                         ),
                       ),
                       Text(
@@ -850,17 +941,17 @@ class DoctorProfileScreen extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-          onPressed: () {
-  final doctorId = controller.doctorData.value?.id;
-  if (doctorId != null) {
-    Get.toNamed(
-      AppRoutes.appointmentScreen,
-      arguments: {'doctorId': doctorId},
-    );
-  } else {
-    Get.snackbar('خطأ', 'معرّف الطبيب غير موجود');
-  }
-},
+              onPressed: () {
+                final doctorId = controller.doctorData.value?.id;
+                if (doctorId != null) {
+                  Get.toNamed(
+                    AppRoutes.appointmentScreen,
+                    arguments: {'doctorId': doctorId},
+                  );
+                } else {
+                  Get.snackbar('Error', 'Doctor ID not found');
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: appColor.appColor.primary,
                 foregroundColor: Colors.white,
@@ -871,7 +962,10 @@ class DoctorProfileScreen extends StatelessWidget {
               ),
               child: Text(
                 'book_now'.tr,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -880,7 +974,6 @@ class DoctorProfileScreen extends StatelessWidget {
     );
   }
 
-  // ---- Info Chip ----
   Widget _buildInfoChip({
     required IconData icon,
     required String label,
@@ -907,20 +1000,13 @@ class DoctorProfileScreen extends StatelessWidget {
                 color: textColor,
               ),
             ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: subTextColor,
-              ),
-            ),
+            Text(label, style: TextStyle(fontSize: 10, color: subTextColor)),
           ],
         ),
       ),
     );
   }
 
-  // ---- Full Width Detail ----
   Widget _buildFullWidthDetail({
     required IconData icon,
     required String label,
@@ -945,7 +1031,11 @@ class DoctorProfileScreen extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: TextStyle(fontSize: 11, color: subTextColor, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: subTextColor,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               Text(
                 value,
@@ -964,7 +1054,6 @@ class DoctorProfileScreen extends StatelessWidget {
     );
   }
 
-  // ---- Time Slot ----
   Widget _buildTimeSlot(
     String time,
     bool isSelected,
@@ -981,7 +1070,9 @@ class DoctorProfileScreen extends StatelessWidget {
           color: isSelected ? appColor.appColor.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: isSelected ? appColor.appColor.primary : Colors.grey.shade300,
+            color: isSelected
+                ? appColor.appColor.primary
+                : Colors.grey.shade300,
             width: 1.5,
           ),
         ),
@@ -997,7 +1088,6 @@ class DoctorProfileScreen extends StatelessWidget {
     );
   }
 
-  // ---- Review Card ----
   Widget _buildReviewCard({
     required String name,
     required String date,
@@ -1038,7 +1128,10 @@ class DoctorProfileScreen extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: textColor,
+                      ),
                     ),
                     Text(
                       date,
@@ -1067,156 +1160,75 @@ class DoctorProfileScreen extends StatelessWidget {
     );
   }
 
-  // ---- Posts Tab ----
-  Widget _buildPostsTab(Color cardColor, Color textColor, Color subTextColor) {
-    final List<Map<String, String>> posts = [
-      {
-        'title': 'أهمية شرب الماء للقلب',
-        'description': 'ينصح بشرب 8 أكواب من الماء يومياً للحفاظ على صحة القلب والوقاية من الجفاف.',
-        'image': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop',
-        'date': 'منذ يومين',
-      },
-      {
-        'title': 'الغذاء الصحي للقلب',
-        'description': 'تناول الخضروات والفواكه الطازجة والبروتينات الخالية من الدهون للحفاظ على قلب سليم.',
-        'image': 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=400&fit=crop',
-        'date': 'منذ 5 أيام',
-      },
-      {
-        'title': 'الرياضة وصحة القلب',
-        'description': 'المشي 30 دقيقة يومياً يقلل من خطر أمراض القلب بنسبة 30% ويحسن الدورة الدموية.',
-        'image': 'https://images.unsplash.com/photo-1535914254981-b5012eebbd15?w=600&h=400&fit=crop',
-        'date': 'منذ أسبوع',
-      },
-      {
-        'title': 'الضغط النفسي وصحة القلب',
-        'description': 'التوتر والضغط النفسي يؤثران سلباً على صحة القلب. تعلم تقنيات الاسترخاء والتنفس العميق.',
-        'image': 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600&h=400&fit=crop',
-        'date': 'منذ أسبوعين',
-      },
-    ];
+ Widget _buildPostsTab(
+  DoctorProfileController controller,
+  Color cardColor,
+  Color textColor,
+  Color subTextColor,
+  Color commentBgColor,
+) {
+  final postsController = controller.postsController;
+    return Obx(() {
+      if (postsController.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (postsController.errorMessage.isNotEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              postsController.errorMessage.value,
+              style: TextStyle(color: subTextColor),
+            ),
+          ),
+        );
+      }
+      if (postsController.posts.isEmpty) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'No posts for this doctor',
+            style: TextStyle(color: subTextColor),
+          ),
+        );
+      }
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(8),
+        itemCount: postsController.posts.length,
+        itemBuilder: (context, index) {
+          final post = postsController.posts[index];
+          return PostCard(
+            post: post,
+            index: index,
+            controller: postsController,
+            cardColor: cardColor,
+            textColor: textColor,
+            subTextColor: subTextColor,
+            commentBgColor: commentBgColor,
+          );
+        },
+      );
+    });
+  }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'all_posts'.tr,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'view_all'.tr,
-                  style: TextStyle(
-                    color: appColor.appColor.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              final post = posts[index];
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: cardColor,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                      child: Image.network(
-                        post['image']!,
-                        height: 180,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          height: 180,
-                          color: Colors.grey.shade200,
-                          child: const Icon(Icons.image, color: Colors.grey, size: 48),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            post['title']!,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: textColor,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            post['description']!,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: subTextColor,
-                              height: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                post['date']!,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {},
-                                child: Text(
-                                  'read_more'.tr,
-                                  style: TextStyle(
-                                    color: appColor.appColor.primary,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
+  
+
+  Color _getColorFromName(String name) {
+    final List<Color> colors = [
+      const Color(0xFFE57373),
+      const Color(0xFF81C784),
+      const Color(0xFF64B5F6),
+      const Color(0xFFFFD54F),
+      const Color(0xFFFF8A65),
+      const Color(0xFFA1887F),
+      const Color(0xFF9575CD),
+      const Color(0xFF4DB6AC),
+      const Color(0xFFFF80AB),
+      const Color(0xFF90A4AE),
+    ];
+    final int index = name.hashCode.abs() % colors.length;
+    return colors[index];
   }
 }

@@ -6,6 +6,7 @@ import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/controller/user_controller.dart';
 import 'package:health_appointment_app/models/doctor_model.dart';
 import 'package:health_appointment_app/services/auth/log_in_services.dart';
+import 'package:health_appointment_app/services/notification_service.dart';
 
 class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
@@ -92,6 +93,12 @@ class LoginController extends GetxController {
             colorText: Colors.green.shade900);
 
         await Future.delayed(const Duration(seconds: 1));
+
+
+final int userId = userData['id'];
+
+                await NotificationService.saveTokenToBackend(userId);
+
         Get.offAllNamed(AppRoutes.mainScreen);
       } else {
         String errorMessage = response?['message'] ?? 'فشل تسجيل الدخول';

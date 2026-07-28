@@ -5,7 +5,7 @@ import 'package:get_storage/get_storage.dart';
 class SettingsController extends GetxController {
   var currentThemeMode = ThemeMode.system.obs;
   var currentLocale = Locale('ar', 'SA').obs;
-  var fontSize = 16.0.obs; // RxDouble
+  var fontSize = 16.0.obs;  
 
   final GetStorage _box = GetStorage();
 

@@ -3,16 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/Routes/routes.dart';
 import 'package:health_appointment_app/controller/doctors_controller.dart';
 import 'package:health_appointment_app/controller/home_controller.dart';
 import 'package:health_appointment_app/controller/settings_controller.dart';
 import 'package:health_appointment_app/controller/user_controller.dart';
+import 'package:health_appointment_app/services/notification_service.dart';
 import 'package:health_appointment_app/translations/app_translations.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+ WidgetsFlutterBinding.ensureInitialized();
+
+  // await Firebase.initializeApp();
+
+  // await NotificationService.init();
+  await Firebase.initializeApp();
+  await NotificationService.init();
+
   await GetStorage.init();
 
   Get.put(SettingsController());
@@ -61,7 +70,7 @@ class MyApp extends StatelessWidget {
           );
         },
 
-        initialRoute: AppRoutes.login,
+        initialRoute: AppRoutes.settingScreen,
         getPages: pages,
       ),
     );

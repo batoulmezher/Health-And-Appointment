@@ -18,7 +18,17 @@ class AllDoctorsScreen extends StatelessWidget {
     final doctorsController = Get.find<DoctorsController>();
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    final String? specialty = specialtyName ?? Get.arguments as String?;
+    Object? args = Get.arguments;
+    String? specialtyFromArgs;
+    if (args is String) {
+      specialtyFromArgs = args;
+    } else if (args is int) {
+      specialtyFromArgs = null;
+    } else {
+      specialtyFromArgs = null;
+    }
+
+    final String? specialty = specialtyName ?? specialtyFromArgs;
 
     if (doctorsController.allDoctors.isEmpty && !doctorsController.isLoading.value) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -34,7 +44,6 @@ class AllDoctorsScreen extends StatelessWidget {
         );
       }
 
-      //  Error state
       if (doctorsController.errorMessage.isNotEmpty) {
         return Scaffold(
           backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC),
@@ -62,7 +71,6 @@ class AllDoctorsScreen extends StatelessWidget {
         );
       }
 
-      //  Filter doctors by specialty (case-insensitive)
       final List<DoctorModel> filteredDoctors = specialty != null && specialty.isNotEmpty
           ? doctorsController.allDoctors.where((d) {
               final docSpecialty = d.data?.specialty?.name ?? '';
@@ -70,7 +78,6 @@ class AllDoctorsScreen extends StatelessWidget {
             }).toList()
           : doctorsController.allDoctors;
 
-      //  No doctors found
       if (filteredDoctors.isEmpty) {
         return Scaffold(
           backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFFF7F8FC),
@@ -95,7 +102,6 @@ class AllDoctorsScreen extends StatelessWidget {
         );
       }
 
-      //  Create filter controller
       final filterController = Get.put(
         DoctorFilterController(allDoctors: filteredDoctors),
         tag: 'doctorFilter',
@@ -146,7 +152,6 @@ class AllDoctorsScreen extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            // ---- Price Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedPriceSort.value == 'بدون ترتيب'
@@ -159,8 +164,6 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
-            // ---- Gender Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedGender.value == 'الكل'
@@ -173,8 +176,6 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
-            // ---- Governorate Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedGovernorate.value == 'الكل'
@@ -187,8 +188,6 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
-            // ---- Rating Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.selectedRating.value > 0
@@ -201,8 +200,6 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
-            // ---- Favorites Filter ----
             Obx(
               () => _buildFilterChip(
                 label: controller.showFavoritesOnly.value ? 'favorites'.tr + ' ✓' : 'favorites'.tr,
@@ -213,8 +210,6 @@ class AllDoctorsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-
-            // ---- Reset Button ----
             GestureDetector(
               onTap: controller.resetFilters,
               child: Container(
@@ -375,7 +370,7 @@ class AllDoctorsScreen extends StatelessWidget {
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: ListView(
-         // mainAxisSize: MainAxisSize.min,
+          shrinkWrap: true,
           children: [
             Text('select_governorate'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),

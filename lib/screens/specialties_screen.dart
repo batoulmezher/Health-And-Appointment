@@ -153,7 +153,6 @@ class SpecialtiesScreen extends StatelessWidget {
           backgroundColor: Colors.amber.withOpacity(0.9),
           colorText: Colors.white,
         );
-        // Navigate to doctors by specialty
          Get.toNamed(AppRoutes.allDoctors, arguments: specialty.name);
       },
       child: Container(

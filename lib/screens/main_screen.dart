@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:health_appointment_app/constant/colors.dart' as appColor;
 import 'package:health_appointment_app/screens/appointments_screen.dart';
+import 'package:health_appointment_app/screens/conversations_screen.dart';
 import 'package:health_appointment_app/screens/home_screen.dart';
 import 'package:health_appointment_app/screens/messages_screen.dart';
 import 'package:health_appointment_app/screens/my_appointments_screen.dart';
+import 'package:health_appointment_app/screens/posts_screen.dart';
 import 'package:health_appointment_app/screens/profile_screen.dart';
 import 'package:health_appointment_app/screens/wallet_screen.dart';
 
@@ -74,9 +76,10 @@ class MainScreenController extends GetxController {
   final pages = [
     const HomeScreen(),
     const MyAppointmentsScreen(),
+    const PostsScreen(),
+const ConversationsScreen(),
     const WalletScreen(),
-
-    const ProfileScreen(),
+    
   ];
 
   void changePage(int index) {

@@ -51,7 +51,6 @@ class OnboardingController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
     currentPage;
     super.onInit();
   }

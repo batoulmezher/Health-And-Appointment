@@ -6,11 +6,17 @@ static const String login = '/login';
 static const String register = '/register';
 static const String resetPassword = '/resetPassword';
 
+static const String notifications = '/notifications';
+static const String conversations = '/conversations';
+static const String chatMessages = '/chatMessages';
+
+
 static const String specialtiesScreen = '/specialtiesScreen';
 static const String allDoctors = '/allDoctors';
 static const String otpRegister = '/otpRegister';
 static const String doctorProfileScreen = '/doctorProfileScreen';
 static const String appointmentScreen = '/appointmentScreen';
+static const String posts = '/posts';
 
 static const String completeProfile = '/completeProfile';
 static const String mainScreen = '/mainScreen';

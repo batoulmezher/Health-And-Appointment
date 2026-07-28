@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:health_appointment_app/controller/posts_controller.dart';
 import 'package:health_appointment_app/models/doctor_model.dart';
 import 'package:health_appointment_app/models/post_model.dart';
 import 'package:health_appointment_app/models/specialty_model.dart';
@@ -11,18 +12,17 @@ class HomeController extends GetxController {
   final searchController = TextEditingController();
   final HomeService _homeService = HomeService();
 
-  // Normal data
+  final PostsController postsController = PostsController();
+
   var doctors = <Data>[].obs;
   var specialties = <SpecialtyModel>[].obs;
   var latestPosts = <PostModel>[].obs;
 
-  // Search state
   var searchResults = <Data>[].obs;
   var isSearching = false.obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
 
-  // Debounce timer
   Timer? _debounceTimer;
 
   @override
@@ -32,14 +32,13 @@ class HomeController extends GetxController {
   }
 
   // ============================================================
-  // Fetch all home data (doctors, specialties, posts)
   Future<void> fetchAllData() async {
     isLoading.value = true;
     errorMessage.value = '';
 
     try {
       final results = await Future.wait([
-        _homeService.getDoctors(),
+        _homeService.getHomeDoctors(),
         _homeService.getHomeSpecialties(),
         _homeService.getLatestPosts(),
       ]);
@@ -52,8 +51,13 @@ class HomeController extends GetxController {
         print("✅ Specialties loaded: ${specialties.length}");
       }
       if (results[2] != null && results[2] is List) {
-        latestPosts.value = results[2] as List<PostModel>;
-        print("✅ Posts loaded: ${latestPosts.length}");
+        final posts = results[2] as List<PostModel>;
+        latestPosts.value = posts;
+        postsController.setPosts(posts);
+        print("✅ Posts loaded: ${posts.length}");
+        for (var post in posts) {
+          print("📊 Post ID: ${post.id}, Comments: ${post.commentsCount}");
+        }
       }
 
       if (doctors.isEmpty && specialties.isEmpty && latestPosts.isEmpty) {
@@ -67,9 +71,6 @@ class HomeController extends GetxController {
     }
   }
 
-  // ============================================================
-  // Search functionality
-  // ============================================================
   void search(String query) {
     if (_debounceTimer?.isActive ?? false) {
       _debounceTimer!.cancel();
@@ -79,35 +80,32 @@ class HomeController extends GetxController {
     });
   }
 
-// lib/controller/home_controller.dart
-// In _performSearch:
-
-Future<void> _performSearch(String query) async {
-  if (query.trim().isEmpty) {
-    searchResults.clear();
-    isSearching.value = false;
-    return;
-  }
-
-  isSearching.value = true;
-  try {
-    print("🔍 Searching for: $query");
-    final results = await _homeService.searchDoctors(query.trim());
-    print("📊 Search results: ${results?.length ?? 0}");
-    if (results != null && results.isNotEmpty) {
-      searchResults.value = results;
-      print("✅ Results stored: ${searchResults.length}");
-    } else {
+  Future<void> _performSearch(String query) async {
+    if (query.trim().isEmpty) {
       searchResults.clear();
-      print("❌ No results found");
+      isSearching.value = false;
+      return;
     }
-  } catch (e) {
-    print("❌ Search error: $e");
-    searchResults.clear();
-  } finally {
-    isSearching.value = false;
+
+    isSearching.value = true;
+    try {
+      print("🔍 Searching for: $query");
+      final results = await _homeService.searchDoctors(query.trim());
+      print("📊 Search results: ${results?.length ?? 0}");
+      if (results != null && results.isNotEmpty) {
+        searchResults.value = results;
+        print("✅ Results stored: ${searchResults.length}");
+      } else {
+        searchResults.clear();
+        print("❌ No results found");
+      }
+    } catch (e) {
+      print("❌ Search error: $e");
+      searchResults.clear();
+    } finally {
+      isSearching.value = false;
+    }
   }
-}
 
   void clearSearch() {
     searchController.clear();
@@ -116,21 +114,23 @@ Future<void> _performSearch(String query) async {
     _debounceTimer?.cancel();
   }
 
-  // ============================================================
-  // Helper getter: returns search results if searching, else normal doctors
   List<Data> get displayedDoctors {
     return isSearching.value || searchResults.isNotEmpty
         ? searchResults
         : doctors;
   }
 
-  // ============================================================
-  // Time ago formatter 
-  
+  void getDoctor(int id) async {
+    final results = await _homeService.getDoctorById(id);
+  }
+
   String getTimeAgo(DateTime dateTime) {
+    return postsController.getTimeAgo(dateTime);
+  }
+
+  String getTimeAgoFromPost(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-
     if (difference.inDays > 365) {
       return 'منذ ${(difference.inDays / 365).floor()} سنة';
     } else if (difference.inDays > 30) {
@@ -146,6 +146,7 @@ Future<void> _performSearch(String query) async {
     }
   }
 
+  // ============================================================
   IconData getIconForSpecialty(String name) {
     final lowerName = name.toLowerCase();
     if (lowerName.contains('cardio')) return Icons.favorite;
@@ -163,8 +164,8 @@ Future<void> _performSearch(String query) async {
 
   @override
   void onClose() {
-    _debounceTimer?.cancel();
-    searchController.dispose();
+   // _debounceTimer?.cancel();
+  //  searchController.dispose();
     super.onClose();
   }
 }

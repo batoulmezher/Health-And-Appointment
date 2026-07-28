@@ -9,10 +9,14 @@ import 'package:health_appointment_app/screens/auth/otp_register_screen.dart';
 import 'package:health_appointment_app/screens/auth/otp_verification_screen.dart';
 import 'package:health_appointment_app/screens/auth/register_screen.dart';
 import 'package:health_appointment_app/screens/auth/reset_password_screen.dart';
+import 'package:health_appointment_app/screens/conversations_screen.dart';
 import 'package:health_appointment_app/screens/doctor_profile_screen.dart';
 import 'package:health_appointment_app/screens/home_screen.dart';
 import 'package:health_appointment_app/screens/main_screen.dart';
+import 'package:health_appointment_app/screens/messages_screen.dart';
+import 'package:health_appointment_app/screens/notifications_screen.dart';
 import 'package:health_appointment_app/screens/onboarding/onboarding.dart';
+import 'package:health_appointment_app/screens/posts_screen.dart';
 import 'package:health_appointment_app/screens/sitting_screen.dart';
 import 'package:health_appointment_app/screens/specialties_screen.dart';
 import 'package:health_appointment_app/screens/splash/splash.dart';
@@ -78,5 +82,21 @@ final pages = <GetPage>[
   GetPage(
   name: AppRoutes.appointmentScreen,
   page: () => const AppointmentScreen(),
+),
+GetPage(
+  name: AppRoutes.posts,
+  page: () => const PostsScreen(),
+),
+GetPage(
+  name: AppRoutes.notifications,
+  page: () => const NotificationsScreen(),
+),
+GetPage(
+  name: AppRoutes.conversations,
+  page: () => const ConversationsScreen(),
+),
+GetPage(
+  name: AppRoutes.chatMessages,
+  page: () => const MessagesScreen(),
 ),
 ];

@@ -24,11 +24,9 @@ class SettingsScreen extends StatelessWidget {
 
           const Divider(),
 
-          //       قسم حجم الخط
           _buildSectionHeader('font_size'.tr),
           _buildFontSizeOptions(),
 
-          // معاينة النص
           const SizedBox(height: 20),
           _buildFontPreview(),
         ],
@@ -246,7 +244,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             MaterialButton(
               onPressed: () {
-                Get.toNamed(AppRoutes.mainScreen);
+                Get.toNamed(AppRoutes.login);
                 
               },
               color: appColor.primary,

@@ -9,7 +9,7 @@ class PostModel {
   final int commentsCount;
   final bool isLikedByCurrentUser;
   final DateTime createdAt;
-  final bool hasImage; 
+  final String? imageUrl;
 
   PostModel({
     required this.id,
@@ -19,7 +19,7 @@ class PostModel {
     required this.commentsCount,
     required this.isLikedByCurrentUser,
     required this.createdAt,
-    this.hasImage = false,
+    this.imageUrl,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -28,9 +28,10 @@ class PostModel {
       doctor: json['doctor'] != null ? Doctor.fromJson(json['doctor']) : null,
       content: json['content'] ?? '',
       likesCount: json['likes_count'] ?? 0,
-      commentsCount: json['comments_count'] ?? 0,
+      commentsCount: json['comments'] ?? json['comments_count'] ?? 0,
       isLikedByCurrentUser: json['is_liked_by_current_user'] ?? false,
       createdAt: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
+      imageUrl: json['image_url'],
     );
   }
 
@@ -43,6 +44,7 @@ class PostModel {
       'comments_count': commentsCount,
       'is_liked_by_current_user': isLikedByCurrentUser,
       'created_at': createdAt.toIso8601String(),
+      'image_url': imageUrl,
     };
   }
 }
@@ -91,6 +93,46 @@ class Doctor {
       'rating_average': ratingAverage,
       'status': status,
       'user': user?.toJson(),
+    };
+  }
+}
+
+class User {
+  final int? id;
+  final String? fullName;
+  final String? email;
+  final String? phoneNumber;
+  final String? gender;
+  final String? profilePictureUrl;
+
+  User({
+    this.id,
+    this.fullName,
+    this.email,
+    this.phoneNumber,
+    this.gender,
+    this.profilePictureUrl,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      fullName: json['full_name'],
+      email: json['email'],
+      phoneNumber: json['phone_number'],
+      gender: json['gender'],
+      profilePictureUrl: json['profile_picture_url'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'full_name': fullName,
+      'email': email,
+      'phone_number': phoneNumber,
+      'gender': gender,
+      'profile_picture_url': profilePictureUrl,
     };
   }
 }

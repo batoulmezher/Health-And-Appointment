@@ -14,7 +14,6 @@ class SplashButton extends StatelessWidget {
     return AnimatedOpacity(
                     duration: Duration(milliseconds: 600),
                     opacity:opacity,
-                    /// controller.showButton.value ? 1.0 : 0.0,
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 600),
                       transform: Matrix4.translationValues(

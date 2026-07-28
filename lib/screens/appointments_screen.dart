@@ -122,7 +122,7 @@ class AppointmentScreen extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Column(
-                                  mainAxisSize: MainAxisSize.min, // لمنع التجاوز
+                                  mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     if (isToday)

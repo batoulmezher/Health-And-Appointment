@@ -4,7 +4,6 @@ class AppTranslations extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
     'ar_SA': {
-      // عام
       'app_name': 'تطبيقي',
       'welcome': 'مرحباً بك',
       'settings': 'الإعدادات',

@@ -13,7 +13,7 @@ class HomeService {
     return _storage.read('token');
   }
 
-  Future<List<Data>?> getDoctors() async {
+  Future<List<Data>?> getHomeDoctors() async {
     try {
       final token = _getToken();
       if (token == null || token.isEmpty) {

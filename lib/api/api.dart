@@ -17,7 +17,7 @@ class Api {
   static Dio get createDio {
     var dio = Dio(BaseOptions(
       baseUrl: appConfig,
-      receiveTimeout: const Duration(seconds: 60), // 25 seconds
+      receiveTimeout: const Duration(seconds: 60), 
       connectTimeout: const Duration(seconds: 25),
       sendTimeout: const Duration(seconds: 25),
     ));

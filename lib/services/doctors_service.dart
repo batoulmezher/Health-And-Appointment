@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart' hide Data;
 import 'package:health_appointment_app/api/api.dart';
 import 'package:health_appointment_app/models/doctor_model.dart';
+import 'package:health_appointment_app/models/post_model.dart';
 
 class DoctorsService {
   final Dio _dio = Api().dio;
@@ -201,4 +202,46 @@ class DoctorsService {
       return null;
     }
   }
+Future<List<PostModel>?> getDoctorPosts(int doctorId, {String? search}) async {
+  try {
+    final token = _getToken();
+    if (token == null || token.isEmpty) {
+      print("⚠️ No token found.");
+      return null;
+    }
+
+    final queryParams = <String, dynamic>{};
+    if (search != null && search.isNotEmpty) {
+      queryParams['search'] = search;
+    }
+
+    final response = await _dio.get(
+      '/api/v1/patient/doctors/$doctorId/posts',
+      options: Options(
+        headers: {'Authorization': 'Bearer $token'},
+      ),
+      queryParameters: queryParams,
+    );
+
+    print("📥 Doctor posts response status: ${response.statusCode}");
+
+    if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
+      final Map<String, dynamic> json = response.data;
+      if (json['status'] == 'success' && json['data'] is List) {
+        final List<dynamic> list = json['data'];
+        return list.map((item) => PostModel.fromJson(item)).toList();
+      }
+    }
+    return null;
+  } on DioException catch (e) {
+    print("❌ Get doctor posts error: ${e.message}");
+    if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+      _storage.remove('token');
+    }
+    return null;
+  } catch (e) {
+    print("❌ Get doctor posts error: $e");
+    return null;
+  }
+}
 }
