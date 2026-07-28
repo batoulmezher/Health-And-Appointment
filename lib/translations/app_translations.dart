@@ -66,7 +66,7 @@ class AppTranslations extends Translations {
 'all': 'الكل',
 'rating_4_plus': '4★ فأكثر',
 'rating_4_5_plus': '4.5★ فأكثر',
-'book_now': 'احجز', 
+'book_now': 'احجز الأن', 
 // Doctor Profile Screen
 'cardiac_specialist': 'أخصائي أمراض القلب',
 'doctor_name': 'د. أحمد الشامي',
@@ -178,7 +178,7 @@ class AppTranslations extends Translations {
 'all': 'All',
 'rating_4_plus': '4★ & above',
 'rating_4_5_plus': '4.5★ & above',
-'book_now': 'Book',
+'book_now': 'Book Now',
 // Doctor Profile Screen
 'cardiac_specialist': 'Cardiac Specialist',
 'doctor_name': 'Dr. Ahmed Al-Shami',

@@ -560,7 +560,6 @@ Container(
   child: IconButton(
     icon: Icon(Icons.chat, color: appColor.appColor.primary),
     onPressed: () async {
-      // استخدم user.id الخاص بالطبيب وليس doctor.id
       final doctorUserId = controller.doctorData.value?.user?.id;
       if (doctorUserId == null) {
         Get.snackbar('Error', 'Doctor user ID not found');
@@ -624,11 +623,36 @@ Container(
             subTextColor,
           ),
           const SizedBox(height: 16),
-          _buildAppointmentsSection(
-            controller,
-            cardColor,
-            textColor,
-            subTextColor,
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                final doctorId = controller.doctorData.value?.id;
+                if (doctorId != null) {
+                  Get.toNamed(
+                    AppRoutes.appointmentScreen,
+                    arguments: {'doctorId': doctorId},
+                  );
+                } else {
+                  Get.snackbar('Error', 'Doctor ID not found');
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: appColor.appColor.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: Text(
+                'book_now'.tr,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 16),
           Container(
@@ -829,151 +853,7 @@ Container(
     );
   }
 
-  Widget _buildAppointmentsSection(
-    DoctorProfileController controller,
-    Color cardColor,
-    Color textColor,
-    Color subTextColor,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: cardColor,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'available_appointments'.tr,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.calendar_month, size: 18),
-                  const SizedBox(width: 4),
-                  Text(
-                    'October 2023',
-                    style: TextStyle(fontSize: 14, color: subTextColor),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(5, (index) {
-                final days = [
-                  'Mon',
-                  'Tue',
-                  'Wed',
-                  'Thu',
-                  'Fri',
-                ];
-                final numbers = ['16', '17', '18', '19', '20'];
-                final isSelected = index == 0;
-                return Container(
-                  width: 68,
-                  height: 76,
-                  margin: const EdgeInsets.only(right: 12),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? appColor.appColor.primary
-                        : Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        days[index],
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: isSelected
-                              ? Colors.white
-                              : Colors.grey.shade600,
-                        ),
-                      ),
-                      Text(
-                        numbers[index],
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : textColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: List.generate(
-              controller.timeSlots.length,
-              (index) => _buildTimeSlot(
-                controller.timeSlots[index],
-                controller.selectedTimeIndex.value == index,
-                controller,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                final doctorId = controller.doctorData.value?.id;
-                if (doctorId != null) {
-                  Get.toNamed(
-                    AppRoutes.appointmentScreen,
-                    arguments: {'doctorId': doctorId},
-                  );
-                } else {
-                  Get.snackbar('Error', 'Doctor ID not found');
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: appColor.appColor.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: Text(
-                'book_now'.tr,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
+  
   Widget _buildInfoChip({
     required IconData icon,
     required String label,

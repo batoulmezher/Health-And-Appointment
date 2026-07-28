@@ -69,17 +69,20 @@ class LoginController extends GetxController {
       );
 
       if (response != null && response['status'] == 'success') {
-  final token = response['data']?['token'];
-  if (token != null) {
-    await GetStorage().write('token', token);
-  }
+        final token = response['data']?['token'];
+        if (token != null) {
+          await GetStorage().write('token', token);
+        }
 
-  final userData = response['data']?['user'];
-  if (userData != null) {
-    final user = User.fromJson(userData);
-    Get.find<UserController>().setUser(user);
-    print("📸 Profile picture URL: ${user.profilePictureUrl}");
-  }
+        final userData = response['data']?['user'];
+        if (userData != null) {
+          final user = User.fromJson(userData);
+          Get.find<UserController>().setUser(user);
+          print("📸 Profile picture URL: ${user.profilePictureUrl}");
+          
+          await GetStorage().write('user_id', user.id);
+          print("👤 User ID saved: ${user.id}");
+        }
 
         if (rememberMe.value) {
           _box.write('email', email);
@@ -94,10 +97,10 @@ class LoginController extends GetxController {
 
         await Future.delayed(const Duration(seconds: 1));
 
-
-final int userId = userData['id'];
-
-                await NotificationService.saveTokenToBackend(userId);
+        final int userId = userData?['id'] ?? 0;
+        if (userId > 0) {
+          await NotificationService.saveTokenToBackend(userId);
+        }
 
         Get.offAllNamed(AppRoutes.mainScreen);
       } else {

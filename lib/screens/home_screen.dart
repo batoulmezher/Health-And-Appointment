@@ -134,16 +134,20 @@ class HomeScreen extends StatelessWidget {
                                       color: Colors.white.withOpacity(0.15),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: IconButton(
-                                      onPressed: () {
+                                    child: 
+                                    
+                                      
+                                       InkWell(
+                                        onTap: () {
                                         Get.toNamed(AppRoutes.notifications);
                                       },
-                                      icon: Icon(
-                                        Icons.notifications_active_outlined,
-                                        color: Colors.white,
-                                        // size: 24,
-                                      ),
-                                    ),
+                                         child: Icon(
+                                          Icons.notifications_active_outlined,
+                                          color: Colors.white,
+                                          // size: 24,
+                                                                              
+                                                                             ),
+                                       ),
                                   ),
                                   const SizedBox(width: 8),
                                   Container(
@@ -680,7 +684,6 @@ class HomeScreen extends StatelessWidget {
     return 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}&background=001b48&color=fff&size=150';
   }
 
-  // ---- Helper: Format working hours ----
   String _formatWorkingHours(WorkingDaysHours? hours) {
     if (hours == null) return '';
     final day =

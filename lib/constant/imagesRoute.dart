@@ -6,5 +6,6 @@ class AppImages {
   static String onboaringPhoto1 = "$imageUrl/screen.png";
   static String onboaringPhoto2 = "$imageUrl/onboarding2.png";
     static String onboaringPhoto4 = "$imageUrl/onboarding6.png";
+    static String back = "$imageUrl/11.jpg";
 
 }

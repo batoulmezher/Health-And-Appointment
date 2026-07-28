@@ -1,4 +1,6 @@
 // lib/services/chat_service.dart
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:health_appointment_app/api/api.dart';
@@ -88,18 +90,37 @@ class ChatService {
     }
   }
 
-  Future<Message?> sendMessage(String conversationId, String content) async {
+  
+    Future<Message?> sendMessage({
+    required String conversationId,
+    String? content,
+    File? imageFile,
+  }) async {
     try {
       final token = _getToken();
       if (token == null || token.isEmpty) return null;
 
+      if ((content == null || content.isEmpty) && imageFile == null) {
+        print('⚠️ No content or image provided');
+        return null;
+      }
+
+      final formData = FormData.fromMap({
+        'conversation_id': conversationId,
+        if (content != null && content.isNotEmpty) 'content': content,
+        if (imageFile != null)
+          'image': await MultipartFile.fromFile(imageFile.path),
+      });
+
       final response = await _dio.post(
         '/api/v1/chat/messages',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-        data: {
-          'conversation_id': conversationId,
-          'content': content,
-        },
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+        data: formData,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
