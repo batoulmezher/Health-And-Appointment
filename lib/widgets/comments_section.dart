@@ -47,15 +47,7 @@ class CommentsSection extends StatelessWidget {
             ),
           );
         }
-        if (controller.comments.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'لا توجد تعليقات حتى الآن',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
-            ),
-          );
-        }
+      
         return Column(
           children: [
             ListView.builder(

@@ -7,6 +7,7 @@ import 'package:health_appointment_app/constant/colors.dart';
 import 'package:health_appointment_app/controller/home_controller.dart';
 import 'package:health_appointment_app/controller/user_controller.dart';
 import 'package:health_appointment_app/models/doctor_model.dart';
+import 'package:health_appointment_app/services/local_notification_service.dart';
 import 'package:health_appointment_app/widgets/post_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -26,9 +27,6 @@ class HomeScreen extends StatelessWidget {
         ? Colors.grey.shade900
         : const Color(0xFFF8F9FB);
     final cardColor = isDarkMode ? Colors.black : Colors.white;
-    final fillColor = isDarkMode
-        ? Colors.grey.shade800
-        : const Color(0xFFF8F9FB);
     final hintColor = isDarkMode ? Colors.white60 : Colors.grey.shade400;
 
     final token = GetStorage().read('token') ?? '';
@@ -69,6 +67,7 @@ class HomeScreen extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              // ====== USER INFO WITH ONTAP ======
                               Row(
                                 children: [
                                   CircleAvatar(
@@ -103,29 +102,34 @@ class HomeScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'greeting'.tr,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.white70,
+                                  GestureDetector(
+                                    onTap: () =>
+                                        Get.toNamed(AppRoutes.userSettings),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'greeting'.tr,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.white70,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        userController.userName,
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                                        Text(
+                                          userController.userName,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
+                              // ====== NOTIFICATION ICONS ======
                               Row(
                                 children: [
                                   Container(
@@ -134,20 +138,15 @@ class HomeScreen extends StatelessWidget {
                                       color: Colors.white.withOpacity(0.15),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: 
-                                    
-                                      
-                                       InkWell(
-                                        onTap: () {
+                                    child: InkWell(
+                                      onTap: () {
                                         Get.toNamed(AppRoutes.notifications);
                                       },
-                                         child: Icon(
-                                          Icons.notifications_active_outlined,
-                                          color: Colors.white,
-                                          // size: 24,
-                                                                              
-                                                                             ),
-                                       ),
+                                      child: Icon(
+                                        Icons.notifications_active_outlined,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                   const SizedBox(width: 8),
                                   Container(
@@ -156,10 +155,15 @@ class HomeScreen extends StatelessWidget {
                                       color: Colors.white.withOpacity(0.15),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: Icon(
-                                      Icons.notifications_none_outlined,
-                                      color: Colors.white,
-                                      size: 24,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Get.toNamed(AppRoutes.alarms);
+                                      },
+                                      child: Icon(
+                                        Icons.notifications_none_outlined,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -176,6 +180,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
 
+          // ====== REMAINDER OF THE HOME SCREEN ======
           SliverList(
             delegate: SliverChildListDelegate([
               const SizedBox(height: 16),
@@ -620,6 +625,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
 
+              // ---- Latest Posts ----
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(

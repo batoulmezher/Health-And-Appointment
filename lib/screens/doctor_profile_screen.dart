@@ -6,6 +6,7 @@ import 'package:health_appointment_app/Routes/pages.dart';
 import 'package:health_appointment_app/constant/colors.dart' as appColor;
 import 'package:health_appointment_app/controller/doctor_profile_controller.dart';
 import 'package:health_appointment_app/screens/messages_screen.dart';
+import 'package:health_appointment_app/screens/review_screen.dart';
 import 'package:health_appointment_app/services/chat_service.dart';
 import 'package:health_appointment_app/widgets/post_card.dart';
 
@@ -272,7 +273,6 @@ class DoctorProfileScreen extends StatelessWidget {
                               subTextColor,
                               commentBgColor,
                             ),
-                          
                         ],
                       ),
                     ),
@@ -550,50 +550,50 @@ class DoctorProfileScreen extends StatelessWidget {
                       );
                     }),
                     const SizedBox(width: 12),
-Container(
-  width: 48,
-  height: 48,
-  decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey.shade300),
-    borderRadius: BorderRadius.circular(12),
-  ),
-  child: IconButton(
-    icon: Icon(Icons.chat, color: appColor.appColor.primary),
-    onPressed: () async {
-      final doctorUserId = controller.doctorData.value?.user?.id;
-      if (doctorUserId == null) {
-        Get.snackbar('Error', 'Doctor user ID not found');
-        return;
-      }
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.chat, color: appColor.appColor.primary),
+                        onPressed: () async {
+                          final doctorUserId = controller.doctorData.value?.user?.id;
+                          if (doctorUserId == null) {
+                            Get.snackbar('Error', 'Doctor user ID not found');
+                            return;
+                          }
 
-      Get.dialog(
-        const Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
+                          Get.dialog(
+                            const Center(child: CircularProgressIndicator()),
+                            barrierDismissible: false,
+                          );
 
-      try {
-        final conversationId = await ChatService().createConversation(doctorUserId);
-        Get.back();
+                          try {
+                            final conversationId = await ChatService().createConversation(doctorUserId);
+                            Get.back();
 
-        if (conversationId != null) {
-          Get.to(
-            () => const MessagesScreen(),
-            arguments: {
-              'conversationId': conversationId,
-              'doctorName': controller.getFullName(),
-              'doctorImage': controller.getProfileImage(),
-            },
-          );
-        } else {
-          Get.snackbar('Error', 'Failed to create conversation');
-        }
-      } catch (e) {
-        Get.back();
-        Get.snackbar('Error', 'An error occurred: $e');
-      }
-    },
-  ),
-),
+                            if (conversationId != null) {
+                              Get.to(
+                                () => const MessagesScreen(),
+                                arguments: {
+                                  'conversationId': conversationId,
+                                  'doctorName': controller.getFullName(),
+                                  'doctorImage': controller.getProfileImage(),
+                                },
+                              );
+                            } else {
+                              Get.snackbar('Error', 'Failed to create conversation');
+                            }
+                          } catch (e) {
+                            Get.back();
+                            Get.snackbar('Error', 'An error occurred: $e');
+                          }
+                        },
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Container(
                       width: 48,
@@ -603,11 +603,34 @@ Container(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: IconButton(
-                        icon: Icon(
-                          Icons.star,
-                          color: appColor.appColor.primary,
-                        ),
-                        onPressed: () {},
+                        icon: Icon(Icons.star, color: appColor.appColor.primary),
+                        onPressed: () async {
+                          final doctorId = doctorData.id;
+                          final doctorName = doctorData.user?.fullName ?? 'طبيب';
+                          final specialtyName = doctorData.specialty?.name ?? 'تخصص غير معروف';
+                          final doctorImage = doctorData.user?.profilePictureUrl;
+                          final rating = double.tryParse(doctorData.ratingAverage ?? '0') ?? 0.0;
+                          final reviewsCount = doctorData.reviews?.length ?? 0;
+
+                          final result = await Get.to(
+                            () => const ReviewScreen(),
+                            arguments: {
+                              'doctorId': doctorId,
+                              'doctorName': doctorName,
+                              'specialtyName': specialtyName,
+                              'doctorImage': doctorImage,
+                              'rating': rating,
+                              'reviewsCount': reviewsCount,
+                            },
+                          );
+
+                          if (result == true) {
+                            final int? id = Get.arguments as int?;
+                            if (id != null) {
+                              await controller.fetchDoctorDetails(id);
+                            }
+                          }
+                        },
                       ),
                     ),
                   ],
@@ -1092,8 +1115,6 @@ Container(
       );
     });
   }
-
-  
 
   Color _getColorFromName(String name) {
     final List<Color> colors = [

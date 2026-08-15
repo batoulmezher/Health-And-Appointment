@@ -43,20 +43,7 @@ class MessagesScreen extends StatelessWidget {
       appBar: _buildWhatsAppAppBar(doctorName, doctorImage),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              AppImages.back,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                color: Colors.grey.shade200, 
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.05), 
-            ),
-          ),
+          
           Column(
             children: [
               Expanded(

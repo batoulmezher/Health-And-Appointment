@@ -1,6 +1,7 @@
 
 import 'package:get/get.dart';
 import 'package:health_appointment_app/Routes/pages.dart';
+import 'package:health_appointment_app/screens/alarms_screen.dart';
 import 'package:health_appointment_app/screens/all_doctors_screen.dart';
 import 'package:health_appointment_app/screens/appointments_screen.dart';
 import 'package:health_appointment_app/screens/auth/forget_password_screen.dart';
@@ -10,6 +11,7 @@ import 'package:health_appointment_app/screens/auth/otp_verification_screen.dart
 import 'package:health_appointment_app/screens/auth/register_screen.dart';
 import 'package:health_appointment_app/screens/auth/reset_password_screen.dart';
 import 'package:health_appointment_app/screens/conversations_screen.dart';
+import 'package:health_appointment_app/screens/create_alarm_screen.dart';
 import 'package:health_appointment_app/screens/doctor_profile_screen.dart';
 import 'package:health_appointment_app/screens/home_screen.dart';
 import 'package:health_appointment_app/screens/main_screen.dart';
@@ -17,9 +19,15 @@ import 'package:health_appointment_app/screens/messages_screen.dart';
 import 'package:health_appointment_app/screens/notifications_screen.dart';
 import 'package:health_appointment_app/screens/onboarding/onboarding.dart';
 import 'package:health_appointment_app/screens/posts_screen.dart';
+import 'package:health_appointment_app/screens/prescription_detail_screen.dart';
+import 'package:health_appointment_app/screens/prescriptions_screen.dart';
+import 'package:health_appointment_app/screens/profile_screen.dart';
+import 'package:health_appointment_app/screens/review_screen.dart';
 import 'package:health_appointment_app/screens/sitting_screen.dart';
 import 'package:health_appointment_app/screens/specialties_screen.dart';
 import 'package:health_appointment_app/screens/splash/splash.dart';
+import 'package:health_appointment_app/screens/user_settings_screen.dart';
+import 'package:health_appointment_app/screens/wallet_screen.dart';
 
 final pages = <GetPage>[
   GetPage(
@@ -98,5 +106,45 @@ GetPage(
 GetPage(
   name: AppRoutes.chatMessages,
   page: () => const MessagesScreen(),
+),
+// lib/Routes/pages.dart
+GetPage(
+  name: AppRoutes.alarms,
+  page: () => const AlarmsScreen(),
+),
+GetPage(
+  name: AppRoutes.createAlarm,
+  page: () => const CreateAlarmScreen(),
+),
+// lib/Routes/pages.dart
+GetPage(
+  name: AppRoutes.prescriptions,
+  page: () => const PrescriptionsScreen(),
+),
+GetPage(
+  name: AppRoutes.prescriptionDetail,
+  page: () => PrescriptionDetailScreen(
+    prescriptionId: Get.arguments?['id'] ?? 0,
+  ),
+),
+// lib/Routes/pages.dart
+GetPage(
+  name: AppRoutes.review,
+  page: () =>  ReviewScreen(
+    
+  ),
+),
+    GetPage(name: AppRoutes.profileScreen, page: () => const ProfileScreen()),
+
+GetPage(
+  name: AppRoutes.wallet,
+  page: () =>  WalletScreen(
+    
+  ),
+),
+
+GetPage(
+  name: AppRoutes.userSettings,
+  page: () => const UserSettingsScreen(),
 ),
 ];

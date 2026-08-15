@@ -7,6 +7,7 @@ import 'package:health_appointment_app/screens/home_screen.dart';
 import 'package:health_appointment_app/screens/messages_screen.dart';
 import 'package:health_appointment_app/screens/my_appointments_screen.dart';
 import 'package:health_appointment_app/screens/posts_screen.dart';
+import 'package:health_appointment_app/screens/prescriptions_screen.dart';
 import 'package:health_appointment_app/screens/profile_screen.dart';
 import 'package:health_appointment_app/screens/wallet_screen.dart';
 
@@ -78,7 +79,7 @@ class MainScreenController extends GetxController {
     const MyAppointmentsScreen(),
     const PostsScreen(),
 const ConversationsScreen(),
-    const WalletScreen(),
+    const PrescriptionsScreen(),
     
   ];
 

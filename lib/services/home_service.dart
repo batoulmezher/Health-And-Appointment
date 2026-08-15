@@ -8,7 +8,6 @@ import 'package:health_appointment_app/models/specialty_model.dart';
 class HomeService {
   final Dio _dio = Api().dio;
   final GetStorage _storage = GetStorage();
-
   String? _getToken() {
     return _storage.read('token');
   }
@@ -22,7 +21,8 @@ class HomeService {
       }
 
       final response = await _dio.get(
-        '/api/v1/home/recommended-doctors',
+        '/api/v1/home/doctors',
+       // '/api/v1/home/recommended-doctors',
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),
