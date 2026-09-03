@@ -1,4 +1,17 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // ✅ أضف هذا السطر (classpath الخاص بـ Google Services)
+        classpath("com.google.gms:google-services:4.4.0")
+        // ... classpath الأخرى إن وجدت (مثل Kotlin Gradle Plugin)
+    }
+}
+
 allprojects {
+    
     repositories {
         google()
         mavenCentral()

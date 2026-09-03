@@ -3,7 +3,30 @@ static const String splashScreen = '/splashScreen';
 static const String homeScreen = '/homeScreen';
 static const String onboarding = '/onboarding';
 static const String login = '/login';
-static const String signUp = '/signUp';
+static const String register = '/register';
+static const String resetPassword = '/resetPassword';
+
+static const String notifications = '/notifications';
+static const String conversations = '/conversations';
+static const String chatMessages = '/chatMessages';
+static const String alarms = '/alarms';
+static const String createAlarm = '/createAlarm';
+
+static const String specialtiesScreen = '/specialtiesScreen';
+static const String allDoctors = '/allDoctors';
+static const String otpRegister = '/otpRegister';
+static const String doctorProfileScreen = '/doctorProfileScreen';
+static const String appointmentScreen = '/appointmentScreen';
+static const String posts = '/posts';
+static const String wallet = '/wallet';
+
+static const String prescriptions = '/prescriptions';
+static const String prescriptionDetail = '/prescriptionDetail';
+static const String review = '/review';
+
+static const String userSettings = '/userSettings';
+
+
 static const String completeProfile = '/completeProfile';
 static const String mainScreen = '/mainScreen';
 static const String otpVerification = '/otpVerification';
@@ -16,8 +39,8 @@ static const String profileScreen = '/profileScreen';
 static const String myAccountScreen = '/myAccountScreen';
 static const String spacialProducts = '/spacialProducts';
 static const String popularProducts = '/popularProducts';
- static const String notification = '/notification';
- static const String settingScreen = '/settingScreen';
+static const String notification =  '/notification';
+static const String settingScreen = '/settingScreen';
 
  
 

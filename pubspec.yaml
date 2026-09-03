@@ -37,6 +37,12 @@ dependencies:
   get: ^4.7.3
   easy_localization: ^3.0.8
   get_storage: ^2.1.1
+  image_picker: ^1.2.2
+  pin_code_fields: ^8.0.1
+  dio: ^5.9.2
+  cached_network_image: ^3.4.1
+  firebase_messaging: ^16.4.3
+  flutter_local_notifications: ^20.1.0
 
 dev_dependencies:
   flutter_test:

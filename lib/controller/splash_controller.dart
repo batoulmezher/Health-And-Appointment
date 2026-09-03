@@ -13,19 +13,15 @@ class SplashController extends GetxController {
   }
 
   void startAnimation() async {
-    //  النص الأول
     await Future.delayed(Duration(seconds: 0));
     showText1.value = true;
 
-    // ظهور النص الثاني 
     await Future.delayed(Duration(seconds: 2));
     showText2.value = true;
 
-    // ظهور النص الثالث
     await Future.delayed(Duration(seconds: 2));
     showText3.value = true;
 
-    // ظهور الزر 
     await Future.delayed(Duration(seconds: 1));
     showButton.value = true;
   }
